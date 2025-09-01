@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame Loading Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        img { max-width: 400px; height: auto; border: 2px solid #ccc; margin: 10px; }
+        .test-section { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <h1>🎬 Frame Loading Test</h1>
+    
+    <div class="test-section">
+        <h2>Agricultural Robot Frames (Working)</h2>
+        <img src="agricultural_robot_frames/robot_frame_000.png" alt="Robot Frame 0">
+        <img src="agricultural_robot_frames/robot_frame_001.png" alt="Robot Frame 1">
+        <img src="agricultural_robot_frames/robot_frame_002.png" alt="Robot Frame 2">
+    </div>
+    
+    <div class="test-section">
+        <h2>Photorealistic Aerial Frames (Test)</h2>
+        <img src="photorealistic_aerial_frames/aerial_frame_000.png" alt="Aerial Frame 0">
+        <img src="photorealistic_aerial_frames/aerial_frame_001.png" alt="Aerial Frame 1">
+        <img src="photorealistic_aerial_frames/aerial_frame_002.png" alt="Aerial Frame 2">
+    </div>
+    
+    <div class="test-section">
+        <h2>Hyper Realistic Robot Frames (Test)</h2>
+        <img src="hyper_realistic_robot_frames/hyper_realistic_frame_000.png" alt="Hyper Frame 0">
+        <img src="hyper_realistic_robot_frames/hyper_realistic_frame_001.png" alt="Hyper Frame 1">
+        <img src="hyper_realistic_robot_frames/hyper_realistic_frame_002.png" alt="Hyper Frame 2">
+    </div>
+    
+    <script>
+        // Test frame loading with console output
+        const frames = [
+            'agricultural_robot_frames/robot_frame_000.png',
+            'photorealistic_aerial_frames/aerial_frame_000.png',
+            'hyper_realistic_robot_frames/hyper_realistic_frame_000.png'
+        ];
+        
+        frames.forEach((framePath, index) => {
+            const img = new Image();
+            img.onload = () => console.log(`✅ Frame ${index + 1} loaded: ${framePath}`);
+            img.onerror = () => console.log(`❌ Frame ${index + 1} failed: ${framePath}`);
+            img.src = framePath;
+        });
+    </script>
+</body>
+</html>

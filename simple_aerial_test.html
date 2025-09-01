@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚁 Simple Aerial Drone Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .frame-display {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+            border: 3px solid #2196f3;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #2196f3, #1976d2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .info {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #1976d2;">🚁 Simple Aerial Drone Test</h1>
+        
+        <img id="droneFrame" class="frame-display" src="photorealistic_aerial_frames/aerial_frame_000.png" alt="Aerial Drone Frame">
+        
+        <div class="info">
+            <span id="frameInfo">Frame 1 / 200</span>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" onclick="playAnimation()">▶ Play</button>
+            <button class="btn" onclick="pauseAnimation()">⏸ Pause</button>
+            <button class="btn" onclick="resetAnimation()">⏮ Reset</button>
+        </div>
+        
+        <div class="info">
+            <span id="statusInfo">Ready to play aerial drone animation</span>
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        const totalFrames = 200;
+        let isPlaying = false;
+        let animationInterval;
+        const animationSpeed = 100; // milliseconds between frames
+        
+        const frameImg = document.getElementById('droneFrame');
+        const frameInfo = document.getElementById('frameInfo');
+        const statusInfo = document.getElementById('statusInfo');
+        
+        function updateFrame(frame) {
+            currentFrame = frame;
+            const paddedFrame = frame.toString().padStart(3, '0');
+            frameImg.src = `photorealistic_aerial_frames/aerial_frame_${paddedFrame}.png`;
+            frameInfo.textContent = `Frame ${frame + 1} / ${totalFrames}`;
+            
+            // Update status based on frame
+            if (frame < 30) {
+                statusInfo.textContent = "🚁 Drone positioning for spray operation";
+            } else if (frame < 170) {
+                statusInfo.textContent = "💧 Active spraying in progress";
+            } else {
+                statusInfo.textContent = "🏁 Spray operation complete";
+            }
+        }
+        
+        function playAnimation() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            statusInfo.textContent = "▶ Playing animation...";
+            
+            animationInterval = setInterval(() => {
+                if (currentFrame >= totalFrames - 1) {
+                    pauseAnimation();
+                    statusInfo.textContent = "✅ Animation complete";
+                    return;
+                }
+                updateFrame(currentFrame + 1);
+            }, animationSpeed);
+        }
+        
+        function pauseAnimation() {
+            isPlaying = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+            statusInfo.textContent = "⏸ Animation paused";
+        }
+        
+        function resetAnimation() {
+            pauseAnimation();
+            updateFrame(0);
+            statusInfo.textContent = "🔄 Animation reset to start";
+        }
+        
+        // Test if first frame loads
+        frameImg.onload = function() {
+            console.log('✅ First frame loaded successfully');
+            statusInfo.textContent = "✅ Ready - frames are loading properly";
+        };
+        
+        frameImg.onerror = function() {
+            console.log('❌ First frame failed to load');
+            statusInfo.textContent = "❌ Error loading frames";
+        };
+        
+        console.log('🚁 Simple Aerial Drone Test initialized');
+    </script>
+</body>
+</html>
