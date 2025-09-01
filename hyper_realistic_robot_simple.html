@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 WORLDLIGHT AGRI CONSULT - Hyper Realistic Agricultural Robot 🌾</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6A1B9A 0%, #8E24AA 50%, #AB47BC 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .viewer-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 2rem 0;
+        }
+
+        .frame-display {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .frame-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .button.primary {
+            background: #FF5722;
+            box-shadow: 0 4px 15px rgba(255,87,34,0.4);
+        }
+
+        .button.primary:hover {
+            background: #E64A19;
+            box-shadow: 0 6px 20px rgba(255,87,34,0.6);
+        }
+
+        .slider {
+            flex: 1;
+            min-width: 200px;
+            margin: 0 1rem;
+        }
+
+        .slider input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF5722;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #AB47BC;
+        }
+
+        .info-card h3 {
+            color: #6A1B9A;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active { background: #4CAF50; }
+        .status-processing { background: #FF9800; }
+        .status-complete { background: #AB47BC; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Hyper Realistic Agricultural Robot</h1>
+        <p>Next-generation autonomous farming technology</p>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🌾 Advanced Robot Operation</h2>
+            <p>Witness our hyper realistic agricultural robot performing complex farming tasks with precision and efficiency.</p>
+            
+            <div class="viewer-container">
+                <div class="frame-display">
+                    <img id="frameImage" class="frame-image" src="hyper_realistic_robot_frames/hyper_realistic_frame_000.png" alt="Hyper Realistic Robot Frame">
+                </div>
+                
+                <div class="controls">
+                    <button class="button primary" onclick="playAnimation()">▶ Play</button>
+                    <button class="button" onclick="pauseAnimation()">⏸ Pause</button>
+                    <button class="button" onclick="resetAnimation()">⏹ Reset</button>
+                    
+                    <div class="control-group">
+                        <label>Frame:</label>
+                        <div class="slider">
+                            <input type="range" id="frameSlider" min="0" max="179" value="0" step="1">
+                        </div>
+                        <span id="frameInfo">0/180</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Speed:</label>
+                        <div class="slider">
+                            <input type="range" id="speedSlider" min="50" max="500" value="120" step="50">
+                        </div>
+                        <span id="speedValue">120ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-card">
+                    <h3>🎯 Current Task</h3>
+                    <p id="currentTask"><span class="status-indicator status-active"></span>Initializing</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>🤖 Robot Status</h3>
+                    <p id="robotStatus"><span class="status-indicator status-active"></span>Operational</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>📊 Task Progress</h3>
+                    <p id="taskProgress">0% Complete</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>⚙️ System Parameters</h3>
+                    <p id="systemParams">Power: 100% | Efficiency: 95%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const frameImage = document.getElementById('frameImage');
+        const frameSlider = document.getElementById('frameSlider');
+        const frameInfo = document.getElementById('frameInfo');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const currentTask = document.getElementById('currentTask');
+        const robotStatus = document.getElementById('robotStatus');
+        const taskProgress = document.getElementById('taskProgress');
+        const systemParams = document.getElementById('systemParams');
+
+        let currentFrame = 0;
+        let totalFrames = 180;
+        let isPlaying = false;
+        let animationInterval = null;
+        let animationSpeed = 120;
+
+        function updateFrame(frame) {
+            currentFrame = frame;
+            frameSlider.value = frame;
+            frameInfo.textContent = `${frame + 1}/${totalFrames}`;
+            
+            // Update frame image
+            const frameNumber = frame.toString().padStart(3, '0');
+            frameImage.src = `hyper_realistic_robot_frames/hyper_realistic_frame_${frameNumber}.png`;
+            
+            // Update task progress
+            const progress = Math.round((frame / (totalFrames - 1)) * 100);
+            taskProgress.textContent = `${progress}% Complete`;
+            
+            // Update task status
+            let task, statusClass, power, efficiency;
+            if (frame < 30) {
+                task = "System Initialization";
+                statusClass = "status-active";
+                power = "100%";
+                efficiency = "95%";
+            } else if (frame < 60) {
+                task = "Field Scanning";
+                statusClass = "status-processing";
+                power = "98%";
+                efficiency = "96%";
+            } else if (frame < 120) {
+                task = "Crop Processing";
+                statusClass = "status-processing";
+                power = "95%";
+                efficiency = "98%";
+            } else if (frame < 150) {
+                task = "Quality Assessment";
+                statusClass = "status-processing";
+                power = "92%";
+                efficiency = "97%";
+            } else {
+                task = "Mission Complete";
+                statusClass = "status-complete";
+                power = "90%";
+                efficiency = "99%";
+            }
+            
+            currentTask.innerHTML = `<span class="status-indicator ${statusClass}"></span>${task}`;
+            robotStatus.innerHTML = `<span class="status-indicator status-active"></span>Operational`;
+            systemParams.textContent = `Power: ${power} | Efficiency: ${efficiency}`;
+        }
+
+        function playAnimation() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            animationInterval = setInterval(() => {
+                if (currentFrame >= totalFrames - 1) {
+                    pauseAnimation();
+                    return;
+                }
+                updateFrame(currentFrame + 1);
+            }, animationSpeed);
+        }
+
+        function pauseAnimation() {
+            isPlaying = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetAnimation() {
+            pauseAnimation();
+            updateFrame(0);
+        }
+
+        // Event listeners
+        frameSlider.addEventListener('input', (e) => {
+            pauseAnimation();
+            updateFrame(parseInt(e.target.value));
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValue.textContent = `${animationSpeed}ms`;
+            
+            if (isPlaying) {
+                pauseAnimation();
+                playAnimation();
+            }
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    if (isPlaying) pauseAnimation();
+                    else playAnimation();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.max(0, currentFrame - 1));
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.min(totalFrames - 1, currentFrame + 1));
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    resetAnimation();
+                    break;
+            }
+        });
+
+        // Initialize
+        updateFrame(0);
+    </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚁 WORLDLIGHT AGRI CONSULT - Photorealistic Aerial Drone Spraying 🌾</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #2196F3 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .viewer-container {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 2rem 0;
+        }
+
+        .frame-display {
+            width: 100%;
+            height: 500px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .frame-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #1565C0 0%, #2196F3 100%);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .button {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .button.primary {
+            background: #FF9800;
+            box-shadow: 0 4px 15px rgba(255,152,0,0.4);
+        }
+
+        .button.primary:hover {
+            background: #F57C00;
+            box-shadow: 0 6px 20px rgba(255,152,0,0.6);
+        }
+
+        .slider {
+            flex: 1;
+            min-width: 200px;
+            margin: 0 1rem;
+        }
+
+        .slider input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #FF9800;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #2196F3;
+        }
+
+        .info-card h3 {
+            color: #1565C0;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-active { background: #4CAF50; }
+        .status-spraying { background: #FF9800; }
+        .status-complete { background: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚁 Photorealistic Aerial Drone Spraying</h1>
+        <p>Advanced precision agriculture technology in action</p>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2>🌾 Drone Crop Spraying Operation</h2>
+            <p>Experience our advanced aerial spraying system with photorealistic visualization. This demonstration shows precision application over agricultural fields.</p>
+            
+            <div class="viewer-container">
+                <div class="frame-display">
+                    <img id="frameImage" class="frame-image" src="photorealistic_aerial_frames/aerial_frame_000.png" alt="Aerial Drone Frame">
+                </div>
+                
+                <div class="controls">
+                    <button class="button primary" onclick="playAnimation()">▶ Play</button>
+                    <button class="button" onclick="pauseAnimation()">⏸ Pause</button>
+                    <button class="button" onclick="resetAnimation()">⏹ Reset</button>
+                    
+                    <div class="control-group">
+                        <label>Frame:</label>
+                        <div class="slider">
+                            <input type="range" id="frameSlider" min="0" max="199" value="0" step="1">
+                        </div>
+                        <span id="frameInfo">0/200</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>Speed:</label>
+                        <div class="slider">
+                            <input type="range" id="speedSlider" min="50" max="500" value="100" step="50">
+                        </div>
+                        <span id="speedValue">100ms</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-card">
+                    <h3>🎯 Current Operation</h3>
+                    <p id="currentOperation"><span class="status-indicator status-active"></span>Starting Operation</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>🚁 Drone Status</h3>
+                    <p id="droneStatus"><span class="status-indicator status-active"></span>Ready</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>📊 Coverage Progress</h3>
+                    <p id="coverageProgress">0% Complete</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>⚡ Flight Parameters</h3>
+                    <p id="flightParams">Altitude: 15m | Speed: 5m/s</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const frameImage = document.getElementById('frameImage');
+        const frameSlider = document.getElementById('frameSlider');
+        const frameInfo = document.getElementById('frameInfo');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const currentOperation = document.getElementById('currentOperation');
+        const droneStatus = document.getElementById('droneStatus');
+        const coverageProgress = document.getElementById('coverageProgress');
+        const flightParams = document.getElementById('flightParams');
+
+        let currentFrame = 0;
+        let totalFrames = 200;
+        let isPlaying = false;
+        let animationInterval = null;
+        let animationSpeed = 100;
+
+        function updateFrame(frame) {
+            currentFrame = frame;
+            frameSlider.value = frame;
+            frameInfo.textContent = `${frame + 1}/${totalFrames}`;
+            
+            // Update frame image
+            const frameNumber = frame.toString().padStart(3, '0');
+            frameImage.src = `photorealistic_aerial_frames/aerial_frame_${frameNumber}.png`;
+            
+            // Update coverage progress
+            const progress = Math.round((frame / (totalFrames - 1)) * 100);
+            coverageProgress.textContent = `${progress}% Complete`;
+            
+            // Update operation status
+            let operation, statusClass, altitude, speed;
+            if (frame < 40) {
+                operation = "Pre-flight Check";
+                statusClass = "status-active";
+                altitude = "0m";
+                speed = "0m/s";
+            } else if (frame < 80) {
+                operation = "Ascending to Position";
+                statusClass = "status-active";
+                altitude = "15m";
+                speed = "3m/s";
+            } else if (frame < 160) {
+                operation = "Precision Spraying";
+                statusClass = "status-spraying";
+                altitude = "15m";
+                speed = "5m/s";
+            } else {
+                operation = "Return to Base";
+                statusClass = "status-complete";
+                altitude = "5m";
+                speed = "7m/s";
+            }
+            
+            currentOperation.innerHTML = `<span class="status-indicator ${statusClass}"></span>${operation}`;
+            droneStatus.innerHTML = `<span class="status-indicator status-active"></span>Operational`;
+            flightParams.textContent = `Altitude: ${altitude} | Speed: ${speed}`;
+        }
+
+        function playAnimation() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            animationInterval = setInterval(() => {
+                if (currentFrame >= totalFrames - 1) {
+                    pauseAnimation();
+                    return;
+                }
+                updateFrame(currentFrame + 1);
+            }, animationSpeed);
+        }
+
+        function pauseAnimation() {
+            isPlaying = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetAnimation() {
+            pauseAnimation();
+            updateFrame(0);
+        }
+
+        // Event listeners
+        frameSlider.addEventListener('input', (e) => {
+            pauseAnimation();
+            updateFrame(parseInt(e.target.value));
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValue.textContent = `${animationSpeed}ms`;
+            
+            if (isPlaying) {
+                pauseAnimation();
+                playAnimation();
+            }
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    if (isPlaying) pauseAnimation();
+                    else playAnimation();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.max(0, currentFrame - 1));
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.min(totalFrames - 1, currentFrame + 1));
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    resetAnimation();
+                    break;
+            }
+        });
+
+        // Initialize
+        updateFrame(0);
+    </script>
+</body>
+</html>
