@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Perception Labs - Technology Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .demo-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .demo-icon {
+            font-size: 2rem;
+            margin-right: 12px;
+        }
+        
+        .demo-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .demo-description {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .demo-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        .demo-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .demo-button:hover {
+            background: linear-gradient(45deg, #00cc6a, #009951);
+            transform: scale(1.02);
+        }
+        
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #00ff88, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .quick-stats {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🤖 Technology Dashboard</h1>
+            <p class="subtitle">Nexus Perception Labs - Advanced Agricultural Technology Demonstrations</p>
+            
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">🏠 Home</a>
+                <a href="agricultural_technology_portfolio.html" class="nav-link">📋 Full Portfolio</a>
+                <a href="about.html" class="nav-link">ℹ️ About</a>
+                <a href="contact.html" class="nav-link">📞 Contact</a>
+            </div>
+        </div>
+        
+        <div class="quick-stats">
+            <h3 style="margin-bottom: 20px;">📊 Portfolio Statistics</h3>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Live Demos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2000+</div>
+                    <div class="stat-label">Animation Frames</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500m²</div>
+                    <div class="stat-label">Max Farm Coverage</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">180fps</div>
+                    <div class="stat-label">Max Frame Rate</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category-section">
+            <h2 class="category-title">🤖 Advanced Agricultural Robotics</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🤖</div>
+                        <div class="demo-title">Hyper-Realistic Agricultural Robot</div>
+                    </div>
+                    <div class="demo-description">
+                        State-of-the-art autonomous harvesting robot with photorealistic simulation, multi-segment robotic arm, and advanced sensor array.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📊 180 Frames</span>
+                        <span>🌱 500m² Farm</span>
+                        <span>⚡ Solar Powered</span>
+                    </div>
+                    <a href="hyper_realistic_robot_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🍅</div>
+                        <div class="demo-title">Enhanced Tomato Harvesting</div>
+                    </div>
+                    <div class="demo-description">
+                        Advanced tomato harvesting robot with collection tracking, dynamic movement patterns, and real-time harvest visualization.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📊 120 Frames</span>
+                        <span>🍅 Collection Tracking</span>
+                        <span>🏠 Greenhouse Environment</span>
+                    </div>
+                    <a href="enhanced_dynamic_tomato_collection_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🌿</div>
+                        <div class="demo-title">Ultra-Realistic Harvesting</div>
+                    </div>
+                    <div class="demo-description">
+                        Professional-grade agricultural robot with ultra-realistic plant interaction and detailed greenhouse environment.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📊 180 Frames</span>
+                        <span>🎬 Cinematic Quality</span>
+                        <span>🏭 Industrial Design</span>
+                    </div>
+                    <a href="ultra_realistic_tomato_harvesting_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🚜</div>
+                        <div class="demo-title">Large-Scale Farm Robot</div>
+                    </div>
+                    <div class="demo-description">
+                        Enterprise-level agricultural robot for large-scale farming with advanced mobility and comprehensive coverage.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📊 200 Frames</span>
+                        <span>🌾 300m² Coverage</span>
+                        <span>🏢 Enterprise Grade</span>
+                    </div>
+                    <a href="ultra_realistic_large_farm_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🔄</div>
+                        <div class="demo-title">Multi-Position Robot</div>
+                    </div>
+                    <div class="demo-description">
+                        Versatile agricultural robot with multiple operational positions and adaptive farm environment capabilities.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📐 Multi-View</span>
+                        <span>🔄 Adaptive</span>
+                        <span>🌱 Variable Crops</span>
+                    </div>
+                    <a href="multi_position_realistic_farm_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">📹</div>
+                        <div class="demo-title">Multi-View Robot System</div>
+                    </div>
+                    <div class="demo-description">
+                        Advanced multi-perspective robot system with 360-degree monitoring and comprehensive oversight capabilities.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📹 360° View</span>
+                        <span>🔍 Surveillance</span>
+                        <span>📊 Analytics</span>
+                    </div>
+                    <a href="multi_view_agricultural_robot_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category-section">
+            <h2 class="category-title">🚁 Advanced Drone Technology</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🚁</div>
+                        <div class="demo-title">Ultra-Realistic Drone System</div>
+                    </div>
+                    <div class="demo-description">
+                        Professional-grade agricultural drone with advanced flight patterns and comprehensive farm surveillance.
+                    </div>
+                    <div class="demo-stats">
+                        <span>✈️ Advanced Flight</span>
+                        <span>📸 High-Res Imaging</span>
+                        <span>🗺️ Precision Mapping</span>
+                    </div>
+                    <a href="ultra_realistic_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">📸</div>
+                        <div class="demo-title">Photorealistic Aerial System</div>
+                    </div>
+                    <div class="demo-description">
+                        Cutting-edge aerial photography system with photorealistic capture and agricultural analysis capabilities.
+                    </div>
+                    <div class="demo-stats">
+                        <span>📸 Photorealistic</span>
+                        <span>🔬 Multi-Spectral</span>
+                        <span>⚡ Real-Time Processing</span>
+                    </div>
+                    <a href="photorealistic_aerial_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🔄</div>
+                        <div class="demo-title">Multi-View Drone System</div>
+                    </div>
+                    <div class="demo-description">
+                        Advanced multi-perspective drone with 360-degree aerial coverage and comprehensive monitoring.
+                    </div>
+                    <div class="demo-stats">
+                        <span>🔄 Multi-Perspective</span>
+                        <span>📡 360° Coverage</span>
+                        <span>📊 Real-Time Tracking</span>
+                    </div>
+                    <a href="multi_view_drone_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">🎥</div>
+                        <div class="demo-title">Realistic Video System</div>
+                    </div>
+                    <div class="demo-description">
+                        Professional video capture system for agricultural monitoring with HD recording and live streaming.
+                    </div>
+                    <div class="demo-stats">
+                        <span>🎥 HD Video</span>
+                        <span>📡 Live Streaming</span>
+                        <span>🎬 Professional Quality</span>
+                    </div>
+                    <a href="realistic_drone_video_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="demo-header">
+                        <div class="demo-icon">👁️</div>
+                        <div class="demo-title">Multi-Perspective Viewer</div>
+                    </div>
+                    <div class="demo-description">
+                        Comprehensive multi-angle drone operation viewer with ground, technical, pilot, and aerial perspectives.
+                    </div>
+                    <div class="demo-stats">
+                        <span>👁️ 4 Perspectives</span>
+                        <span>🎮 Interactive</span>
+                        <span>📋 Technical Analysis</span>
+                    </div>
+                    <a href="multi_perspective_viewer.html" class="demo-button">🎬 Launch Demo</a>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; padding: 40px 20px; background: rgba(0,0,0,0.3); border-radius: 15px; margin-top: 40px;">
+            <h3 style="margin-bottom: 15px; color: #00ff88;">🌟 Ready to Explore?</h3>
+            <p style="margin-bottom: 25px; opacity: 0.9;">Experience the future of agricultural technology through our interactive demonstrations</p>
+            <a href="agricultural_technology_portfolio.html" style="display: inline-block; padding: 15px 30px; background: linear-gradient(45deg, #00ff88, #00cc6a); color: white; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 16px; transition: all 0.3s ease;"
+               onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 30px rgba(0,255,136,0.4)'"
+               onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='none'">
+                📋 View Complete Portfolio
+            </a>
+        </div>
+    </div>
+</body>
+</html>

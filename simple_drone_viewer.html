@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realistic Drone Farm Video - SIMPLE VIEWER</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #2E8B57;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .video-frame {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border: 3px solid #2E8B57;
+            border-radius: 10px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .play-btn {
+            background: #FF6B35;
+            padding: 20px 30px;
+            font-size: 18px;
+        }
+        
+        .frame-info {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        .thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .thumb {
+            width: 100px;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .thumb:hover {
+            border-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚁 REALISTIC DRONE SPRAYING TOMATO FARM 🍅</h1>
+    <h2>Worldlight Agri Consult - Ultra-Realistic Video</h2>
+    
+    <div class="container">
+        <h3>Real Drone, Real Tomatoes, Real Water Spraying!</h3>
+        
+        <img id="videoFrame" class="video-frame" src="realistic_video_frames/realistic_frame_000.png" alt="Drone Video">
+        
+        <div class="frame-info" id="frameInfo">Frame 1 of 200 - Mission Start</div>
+        
+        <div class="controls">
+            <button class="play-btn" onclick="playVideo()">▶️ PLAY VIDEO</button>
+            <button onclick="pauseVideo()">⏸️ PAUSE</button>
+            <button onclick="resetVideo()">🔄 RESTART</button>
+        </div>
+        
+        <div class="controls">
+            <button onclick="setSpeed(0.5)">0.5x Speed</button>
+            <button onclick="setSpeed(1)">Normal Speed</button>
+            <button onclick="setSpeed(2)">2x Speed</button>
+        </div>
+        
+        <h4>Quick Jump to Key Moments:</h4>
+        <div class="thumbnails">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_000.png" onclick="jumpTo(0)" title="Start">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_025.png" onclick="jumpTo(25)" title="Spraying Starts">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_050.png" onclick="jumpTo(50)" title="First Pass">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_100.png" onclick="jumpTo(100)" title="Mid Operation">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_150.png" onclick="jumpTo(150)" title="Final Pass">
+            <img class="thumb" src="realistic_video_frames/realistic_frame_199.png" onclick="jumpTo(199)" title="Complete">
+        </div>
+        
+        <div style="background: #e8f5e8; padding: 15px; border-radius: 10px; margin: 20px 0;">
+            <h3>🎯 What You're Seeing:</h3>
+            <p><strong>✅ Realistic Drone:</strong> 4 rotating propellers, GPS, camera, battery indicator</p>
+            <p><strong>✅ Real Tomato Plants:</strong> 120+ plants with actual red tomatoes and green leaves</p>
+            <p><strong>✅ Water Spraying:</strong> Visible water droplets, spray patterns, coverage</p>
+            <p><strong>✅ Farm Environment:</strong> Soil, irrigation, weather conditions</p>
+            <p><strong>✅ Plant Health:</strong> Watch plants get healthier as they receive water!</p>
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let totalFrames = 200;
+        let isPlaying = false;
+        let playInterval = null;
+        let playSpeed = 1;
+        
+        function updateFrame() {
+            const img = document.getElementById('videoFrame');
+            const info = document.getElementById('frameInfo');
+            
+            const paddedFrame = currentFrame.toString().padStart(3, '0');
+            img.src = 'realistic_video_frames/realistic_frame_' + paddedFrame + '.png';
+            
+            let description = '';
+            if (currentFrame < 25) description = 'Drone Positioning';
+            else if (currentFrame < 50) description = 'First Pass Spraying';
+            else if (currentFrame < 100) description = 'Second Row Coverage';
+            else if (currentFrame < 150) description = 'Third Pass Operation';
+            else if (currentFrame < 180) description = 'Final Coverage';
+            else description = 'Mission Complete - Returning';
+            
+            info.textContent = `Frame ${currentFrame + 1} of ${totalFrames} - ${description}`;
+        }
+        
+        function playVideo() {
+            if (isPlaying) return;
+            isPlaying = true;
+            
+            playInterval = setInterval(() => {
+                currentFrame++;
+                if (currentFrame >= totalFrames) {
+                    currentFrame = totalFrames - 1;
+                    pauseVideo();
+                    return;
+                }
+                updateFrame();
+            }, 200 / playSpeed);
+        }
+        
+        function pauseVideo() {
+            isPlaying = false;
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+        }
+        
+        function resetVideo() {
+            pauseVideo();
+            currentFrame = 0;
+            updateFrame();
+        }
+        
+        function jumpTo(frame) {
+            pauseVideo();
+            currentFrame = frame;
+            updateFrame();
+        }
+        
+        function setSpeed(speed) {
+            playSpeed = speed;
+            if (isPlaying) {
+                pauseVideo();
+                playVideo();
+            }
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keydown', function(event) {
+            if (event.key === ' ') {
+                event.preventDefault();
+                if (isPlaying) pauseVideo();
+                else playVideo();
+            }
+            if (event.key === 'ArrowLeft' && currentFrame > 0) {
+                currentFrame--;
+                updateFrame();
+            }
+            if (event.key === 'ArrowRight' && currentFrame < totalFrames - 1) {
+                currentFrame++;
+                updateFrame();
+            }
+        });
+        
+        // Initialize
+        updateFrame();
+    </script>
+</body>
+</html>

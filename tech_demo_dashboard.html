@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agricultural Technology Simulator - Worldlight Agri Consult</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.18.2/plotly.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #2d5016;
+        }
+
+        .main-container {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .demo-card h3 {
+            color: #2d5016;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .demo-controls {
+            margin: 1rem 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #1a2f0a;
+            transform: scale(1.05);
+        }
+
+        .btn.secondary {
+            background: #667eea;
+        }
+
+        .btn.secondary:hover {
+            background: #5a67d8;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .simulation-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .slider-container {
+            margin: 1rem 0;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2d5016;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2d5016;
+            cursor: pointer;
+            border: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-good { background: #22c55e; }
+        .status-warning { background: #f59e0b; }
+        .status-danger { background: #ef4444; }
+
+        .live-data {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer p {
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">🌱 Worldlight Agri Consult</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#drones">Drone Tech</a></li>
+                    <li><a href="#iot">IoT Systems</a></li>
+                    <li><a href="#robotics">Robotics</a></li>
+                    <li><a href="#ai">AI Solutions</a></li>
+                    <li><a href="#analysis">ROI Analysis</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <section class="hero">
+            <h1>🚀 Agricultural Technology Simulator</h1>
+            <p>Experience the future of farming through interactive demonstrations</p>
+        </section>
+
+        <div class="demo-grid">
+            <!-- Drone Irrigation Demo -->
+            <div class="demo-card" id="drones">
+                <h3>🚁 Smart Drone Irrigation System</h3>
+                <p>Real-time precision irrigation with AI-powered water distribution</p>
+                
+                <div class="demo-controls">
+                    <button class="btn" onclick="startDroneDemo()">Start Demo</button>
+                    <button class="btn secondary" onclick="resetDroneDemo()">Reset</button>
+                </div>
+
+                <div class="slider-container">
+                    <label for="field-size">Field Size (hectares): <span id="field-size-value">5</span></label>
+                    <input type="range" class="slider" id="field-size" min="1" max="20" value="5" oninput="updateFieldSize(this.value)">
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="water-saved">25%</div>
+                        <div class="metric-label">Water Saved</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="coverage-area">95%</div>
+                        <div class="metric-label">Coverage</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="flight-time">12</div>
+                        <div class="metric-label">Flight Time (min)</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="droneChart"></canvas>
+                </div>
+            </div>
+
+            <!-- IoT Greenhouse Demo -->
+            <div class="demo-card" id="iot">
+                <h3>🏠 Smart Greenhouse IoT Network</h3>
+                <p>Automated climate control with sensor networks and AI optimization</p>
+                
+                <div class="demo-controls">
+                    <button class="btn" onclick="startIoTDemo()">Start Monitoring</button>
+                    <button class="btn secondary" onclick="toggleAlerts()">Toggle Alerts</button>
+                </div>
+
+                <div class="live-data">
+                    <h4>Live Sensor Data</h4>
+                    <p><span class="status-indicator status-good"></span>Temperature: <span id="temp-reading">22.5°C</span></p>
+                    <p><span class="status-indicator status-good"></span>Humidity: <span id="humidity-reading">65%</span></p>
+                    <p><span class="status-indicator status-warning"></span>CO2 Level: <span id="co2-reading">420 ppm</span></p>
+                    <p><span class="status-indicator status-good"></span>Soil Moisture: <span id="soil-reading">78%</span></p>
+                </div>
+
+                <div class="chart-container">
+                    <div id="iotChart"></div>
+                </div>
+            </div>
+
+            <!-- Robotic Harvesting Demo -->
+            <div class="demo-card" id="robotics">
+                <h3>🤖 Robotic Harvesting System</h3>
+                <p>Autonomous fish harvesting with computer vision and precision robotics</p>
+                
+                <div class="demo-controls">
+                    <button class="btn" onclick="startRobotDemo()">Start Harvesting</button>
+                    <button class="btn secondary" onclick="adjustSpeed()">Adjust Speed</button>
+                </div>
+
+                <div class="slider-container">
+                    <label for="robot-speed">Robot Speed: <span id="robot-speed-value">Normal</span></label>
+                    <input type="range" class="slider" id="robot-speed" min="1" max="3" value="2" oninput="updateRobotSpeed(this.value)">
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="fish-harvested">0</div>
+                        <div class="metric-label">Fish Harvested</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="accuracy-rate">95%</div>
+                        <div class="metric-label">Accuracy</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="stress-level">Low</div>
+                        <div class="metric-label">Fish Stress</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="robotChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Crop Monitoring Demo -->
+            <div class="demo-card" id="ai">
+                <h3>🌱 AI Crop Health Monitoring</h3>
+                <p>Machine learning-powered disease detection and yield prediction</p>
+                
+                <div class="demo-controls">
+                    <button class="btn" onclick="startAIDemo()">Scan Field</button>
+                    <button class="btn secondary" onclick="generateReport()">Generate Report</button>
+                </div>
+
+                <div class="live-data">
+                    <h4>AI Analysis Results</h4>
+                    <p><span class="status-indicator status-good"></span>Crop Health: <span id="crop-health">Excellent</span></p>
+                    <p><span class="status-indicator status-warning"></span>Disease Risk: <span id="disease-risk">Low</span></p>
+                    <p><span class="status-indicator status-good"></span>Yield Prediction: <span id="yield-prediction">4.2 t/ha</span></p>
+                    <p><span class="status-indicator status-good"></span>Nutrients: <span id="nutrient-status">Adequate</span></p>
+                </div>
+
+                <div class="chart-container">
+                    <div id="aiChart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Analysis Section -->
+        <section class="simulation-panel" id="analysis">
+            <h2>💰 Return on Investment Calculator</h2>
+            <p>Calculate the financial impact of implementing agricultural technology</p>
+
+            <div class="demo-grid">
+                <div>
+                    <h4>Investment Parameters</h4>
+                    <div class="slider-container">
+                        <label for="farm-size">Farm Size (hectares): <span id="farm-size-value">10</span></label>
+                        <input type="range" class="slider" id="farm-size" min="1" max="100" value="10" oninput="updateROI()">
+                    </div>
+                    <div class="slider-container">
+                        <label for="tech-budget">Technology Budget ($): <span id="tech-budget-value">50000</span></label>
+                        <input type="range" class="slider" id="tech-budget" min="10000" max="200000" value="50000" step="5000" oninput="updateROI()">
+                    </div>
+                    <div class="slider-container">
+                        <label for="crop-type">Crop Type: <span id="crop-type-value">Mixed Vegetables</span></label>
+                        <select id="crop-type" onchange="updateROI()" style="width: 100%; padding: 0.5rem; border-radius: 5px; border: 1px solid #ddd;">
+                            <option value="vegetables">Mixed Vegetables</option>
+                            <option value="grains">Grains</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="livestock">Livestock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>ROI Projection</h4>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-value" id="roi-percentage">142%</div>
+                            <div class="metric-label">5-Year ROI</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="payback-period">2.3</div>
+                            <div class="metric-label">Payback (Years)</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="annual-savings">$18,500</div>
+                            <div class="metric-label">Annual Savings</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="productivity-gain">35%</div>
+                            <div class="metric-label">Productivity Gain</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="roiChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 Worldlight Agri Consult - Transforming Agriculture Through Technology</p>
+        <p>Contact us for personalized technology demonstrations and consultations</p>
+    </footer>
+
+    <script>
+        // Global variables for demos
+        let droneInterval, iotInterval, robotInterval, aiInterval;
+        let droneChart, robotChart, roiChart;
+        let fishCount = 0;
+
+        // Initialize all charts on page load
+        window.onload = function() {
+            initializeDroneChart();
+            initializeRobotChart();
+            initializeROIChart();
+            initializeIoTChart();
+            initializeAIChart();
+            updateROI();
+        };
+
+        // Drone Demo Functions
+        function initializeDroneChart() {
+            const ctx = document.getElementById('droneChart').getContext('2d');
+            droneChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['0 min', '2 min', '4 min', '6 min', '8 min', '10 min', '12 min'],
+                    datasets: [{
+                        label: 'Water Distribution (%)',
+                        data: [0, 15, 35, 60, 80, 95, 100],
+                        borderColor: '#2d5016',
+                        backgroundColor: 'rgba(45, 80, 22, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Battery Level (%)',
+                        data: [100, 95, 87, 78, 65, 45, 20],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Drone Performance Metrics'
+                        }
+                    }
+                }
+            });
+        }
+
+        function startDroneDemo() {
+            let progress = 0;
+            droneInterval = setInterval(() => {
+                progress += 5;
+                document.getElementById('coverage-area').textContent = Math.min(progress, 95) + '%';
+                document.getElementById('water-saved').textContent = Math.min(Math.floor(progress * 0.3), 30) + '%';
+                document.getElementById('flight-time').textContent = Math.floor(progress * 0.15) + '';
+                
+                if (progress >= 100) {
+                    clearInterval(droneInterval);
+                    alert('✅ Drone irrigation completed successfully!');
+                }
+            }, 500);
+        }
+
+        function resetDroneDemo() {
+            clearInterval(droneInterval);
+            document.getElementById('coverage-area').textContent = '0%';
+            document.getElementById('water-saved').textContent = '0%';
+            document.getElementById('flight-time').textContent = '0';
+        }
+
+        function updateFieldSize(value) {
+            document.getElementById('field-size-value').textContent = value;
+            document.getElementById('flight-time').textContent = Math.floor(value * 2.4);
+        }
+
+        // IoT Demo Functions
+        function initializeIoTChart() {
+            const trace1 = {
+                x: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+                y: [22.1, 22.5, 23.2, 24.1, 23.8, 23.2],
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Temperature (°C)',
+                line: { color: '#ef4444' }
+            };
+
+            const trace2 = {
+                x: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00'],
+                y: [68, 65, 62, 58, 61, 65],
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Humidity (%)',
+                yaxis: 'y2',
+                line: { color: '#3b82f6' }
+            };
+
+            const layout = {
+                title: 'Real-time Environmental Data',
+                xaxis: { title: 'Time' },
+                yaxis: { title: 'Temperature (°C)', side: 'left' },
+                yaxis2: {
+                    title: 'Humidity (%)',
+                    side: 'right',
+                    overlaying: 'y'
+                },
+                height: 300
+            };
+
+            Plotly.newPlot('iotChart', [trace1, trace2], layout);
+        }
+
+        function startIoTDemo() {
+            iotInterval = setInterval(() => {
+                // Simulate sensor readings
+                const temp = (22 + Math.random() * 3).toFixed(1);
+                const humidity = (60 + Math.random() * 20).toFixed(0);
+                const co2 = (400 + Math.random() * 50).toFixed(0);
+                const soil = (70 + Math.random() * 20).toFixed(0);
+
+                document.getElementById('temp-reading').textContent = temp + '°C';
+                document.getElementById('humidity-reading').textContent = humidity + '%';
+                document.getElementById('co2-reading').textContent = co2 + ' ppm';
+                document.getElementById('soil-reading').textContent = soil + '%';
+
+                // Update status indicators based on values
+                updateStatusIndicators(temp, humidity, co2, soil);
+            }, 2000);
+        }
+
+        function updateStatusIndicators(temp, humidity, co2, soil) {
+            // Simple logic to update status colors
+            const tempStatus = temp > 25 ? 'status-warning' : 'status-good';
+            const humidityStatus = humidity < 50 || humidity > 80 ? 'status-warning' : 'status-good';
+            const co2Status = co2 > 450 ? 'status-warning' : 'status-good';
+            const soilStatus = soil < 60 ? 'status-danger' : 'status-good';
+
+            // Update status indicators (you can enhance this)
+        }
+
+        function toggleAlerts() {
+            alert('🔔 Alert system toggled! You will receive notifications for critical conditions.');
+        }
+
+        // Robot Demo Functions
+        function initializeRobotChart() {
+            const ctx = document.getElementById('robotChart').getContext('2d');
+            robotChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Fish Detected', 'Successfully Harvested', 'Missed', 'Damaged'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: [
+                            '#3b82f6',
+                            '#22c55e',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Harvesting Performance'
+                        }
+                    }
+                }
+            });
+        }
+
+        function startRobotDemo() {
+            fishCount = 0;
+            let detected = 0, harvested = 0, missed = 0, damaged = 0;
+            
+            robotInterval = setInterval(() => {
+                detected += Math.floor(Math.random() * 3) + 1;
+                harvested += Math.floor(Math.random() * 2) + 1;
+                missed += Math.random() < 0.1 ? 1 : 0;
+                damaged += Math.random() < 0.05 ? 1 : 0;
+                
+                document.getElementById('fish-harvested').textContent = harvested;
+                document.getElementById('accuracy-rate').textContent = Math.floor((harvested / detected) * 100) + '%';
+                
+                robotChart.data.datasets[0].data = [detected, harvested, missed, damaged];
+                robotChart.update();
+                
+                if (harvested >= 50) {
+                    clearInterval(robotInterval);
+                    alert('🎉 Harvesting cycle completed! 50 fish successfully harvested.');
+                }
+            }, 1000);
+        }
+
+        function updateRobotSpeed(value) {
+            const speeds = ['Slow', 'Normal', 'Fast'];
+            document.getElementById('robot-speed-value').textContent = speeds[value - 1];
+        }
+
+        function adjustSpeed() {
+            alert('⚙️ Robot speed adjusted based on fish density and stress levels.');
+        }
+
+        // AI Demo Functions
+        function initializeAIChart() {
+            const data = [{
+                values: [85, 10, 3, 2],
+                labels: ['Healthy Plants', 'Early Disease', 'Nutrient Deficiency', 'Pest Damage'],
+                type: 'pie',
+                marker: {
+                    colors: ['#22c55e', '#f59e0b', '#ef4444', '#8b5cf6']
+                }
+            }];
+
+            const layout = {
+                title: 'Crop Health Distribution',
+                height: 300,
+                showlegend: true
+            };
+
+            Plotly.newPlot('aiChart', data, layout);
+        }
+
+        function startAIDemo() {
+            aiInterval = setInterval(() => {
+                // Simulate AI analysis
+                const health = ['Excellent', 'Good', 'Fair', 'Poor'][Math.floor(Math.random() * 4)];
+                const disease = ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)];
+                const yield = (3.5 + Math.random() * 2).toFixed(1);
+                const nutrients = ['Adequate', 'Low', 'High'][Math.floor(Math.random() * 3)];
+
+                document.getElementById('crop-health').textContent = health;
+                document.getElementById('disease-risk').textContent = disease;
+                document.getElementById('yield-prediction').textContent = yield + ' t/ha';
+                document.getElementById('nutrient-status').textContent = nutrients;
+            }, 3000);
+        }
+
+        function generateReport() {
+            alert('📊 Comprehensive field report generated! Check your email for detailed analysis and recommendations.');
+        }
+
+        // ROI Calculator Functions
+        function initializeROIChart() {
+            const ctx = document.getElementById('roiChart').getContext('2d');
+            roiChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Year 0', 'Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+                    datasets: [{
+                        label: 'Traditional Farming',
+                        data: [0, 50000, 100000, 150000, 200000, 250000],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.1
+                    }, {
+                        label: 'Technology Enhanced',
+                        data: [-50000, 10000, 75000, 145000, 225000, 320000],
+                        borderColor: '#22c55e',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Cumulative Profit Comparison'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateROI() {
+            const farmSize = document.getElementById('farm-size').value;
+            const budget = document.getElementById('tech-budget').value;
+            const cropType = document.getElementById('crop-type').value;
+
+            document.getElementById('farm-size-value').textContent = farmSize;
+            document.getElementById('tech-budget-value').textContent = '$' + parseInt(budget).toLocaleString();
+
+            // Update crop type display
+            const cropTypes = {
+                'vegetables': 'Mixed Vegetables',
+                'grains': 'Grains',
+                'fruits': 'Fruits',
+                'livestock': 'Livestock'
+            };
+            document.getElementById('crop-type-value').textContent = cropTypes[cropType];
+
+            // Calculate ROI based on inputs
+            const baseYield = farmSize * 1000; // Base annual revenue per hectare
+            const techMultiplier = Math.min(budget / 50000, 2); // Technology effectiveness
+            const cropMultiplier = { vegetables: 1.2, grains: 1.0, fruits: 1.5, livestock: 1.3 }[cropType];
+
+            const annualSavings = Math.floor(baseYield * techMultiplier * cropMultiplier * 0.3);
+            const paybackPeriod = (budget / annualSavings).toFixed(1);
+            const fiveYearROI = Math.floor(((annualSavings * 5 - budget) / budget) * 100);
+            const productivityGain = Math.floor(techMultiplier * cropMultiplier * 25);
+
+            document.getElementById('annual-savings').textContent = '$' + annualSavings.toLocaleString();
+            document.getElementById('payback-period').textContent = paybackPeriod;
+            document.getElementById('roi-percentage').textContent = fiveYearROI + '%';
+            document.getElementById('productivity-gain').textContent = productivityGain + '%';
+
+            // Update ROI chart
+            const traditionalData = [0];
+            const techData = [-budget];
+            
+            for (let year = 1; year <= 5; year++) {
+                traditionalData.push(traditionalData[year-1] + baseYield);
+                techData.push(techData[year-1] + baseYield * (1 + productivityGain/100) - (year === 1 ? budget * 0.1 : budget * 0.05));
+            }
+
+            roiChart.data.datasets[0].data = traditionalData;
+            roiChart.data.datasets[1].data = techData;
+            roiChart.update();
+        }
+
+        // Cleanup intervals when page unloads
+        window.onbeforeunload = function() {
+            clearInterval(droneInterval);
+            clearInterval(iotInterval);
+            clearInterval(robotInterval);
+            clearInterval(aiInterval);
+        };
+    </script>
+</body>
+</html>

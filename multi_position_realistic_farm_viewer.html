@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 WORLDLIGHT AGRI CONSULT - Multi-Position Realistic Farm Robot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            color: #87CEEB;
+        }
+
+        .header p {
+            margin: 10px 0;
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            font-size: 1.1em;
+        }
+
+        button {
+            background: linear-gradient(45deg, #4682B4, #87CEEB);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #87CEEB, #B0E0E6);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        input[type="range"] {
+            width: 350px;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            font-weight: bold;
+            width: 90px;
+            font-size: 1.1em;
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .viewer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .frame-display {
+            max-width: 95%;
+            max-height: 75vh;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transition: transform 0.4s ease;
+            border: 3px solid rgba(135, 206, 235, 0.5);
+        }
+
+        .frame-display:hover {
+            transform: scale(1.02);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            transition: transform 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .stat-value {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #87CEEB;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-top: 8px;
+        }
+
+        .camera-positions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .camera-positions h3 {
+            margin-top: 0;
+            color: #87CEEB;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .camera-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #4682B4;
+            transition: all 0.3s ease;
+        }
+
+        .camera-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .camera-active {
+            border-left-color: #FFD700 !important;
+            background: rgba(255, 215, 0, 0.1) !important;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-approaching {
+            background-color: #FFD700;
+        }
+
+        .status-harvesting {
+            background-color: #32CD32;
+        }
+
+        .status-collecting {
+            background-color: #FF6347;
+        }
+
+        .status-returning {
+            background-color: #4169E1;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.3em;
+            color: #87CEEB;
+        }
+
+        .robot-specs {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            input[type="range"] {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 WORLDLIGHT AGRI CONSULT</h1>
+        <p>Realistic Farm Agricultural Robot - Multiple Viewing Perspectives</p>
+        <p>📹 5 Simulated Camera Angles | 🏭 Industrial AG-4000 Robot | 🌱 Authentic Greenhouse 🍅</p>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <button id="playBtn" onclick="togglePlay()">▶️ Play</button>
+            <button onclick="resetAnimation()">🔄 Reset</button>
+        </div>
+        
+        <div class="control-group">
+            <label for="frameSlider">Frame:</label>
+            <input type="range" id="frameSlider" min="0" max="119" value="0" oninput="seekFrame(this.value)">
+        </div>
+        
+        <div class="control-group">
+            <label for="speedInput">Speed:</label>
+            <input type="number" id="speedInput" min="0.1" max="5" step="0.1" value="1" placeholder="1.0">
+        </div>
+        
+        <div class="control-group">
+            <label for="frameInput">Go to:</label>
+            <input type="number" id="frameInput" min="0" max="119" placeholder="Frame #">
+            <button onclick="goToFrame()">Go</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="currentFrame">1</div>
+            <div class="stat-label">Current Frame</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="harvestedCount">0</div>
+            <div class="stat-label">Tomatoes Harvested</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="cameraPosition">Front View</div>
+            <div class="stat-label">📹 Camera Angle</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="operationStatus">APPROACHING</div>
+            <div class="stat-label">
+                <span class="status-indicator status-approaching" id="statusIndicator"></span>
+                Operation Status
+            </div>
+        </div>
+    </div>
+
+    <div class="viewer-container">
+        <img id="frameImage" class="frame-display" src="multi_position_realistic_farm_frames/multi_position_realistic_frame_000.png" 
+             alt="Multi-Position Realistic Farm Robot" onerror="showError()">
+    </div>
+
+    <div class="camera-positions">
+        <h3>📹 Simulated Camera Position Cycle (Every 30 Frames)</h3>
+        <div class="camera-grid">
+            <div class="camera-item" id="camera0">
+                <strong>📹 Position 1: Front View (Frames 0-29)</strong><br>
+                Complete overview of the greenhouse facility with full robot workspace visibility. Shows the industrial base, control systems, and harvesting operations.
+            </div>
+            <div class="camera-item" id="camera1">
+                <strong>📹 Position 2: Side View (Frames 30-59)</strong><br>
+                Profile perspective highlighting robotic arm articulation and movement mechanics. Excellent view of the 4-DOF joint operations.
+            </div>
+            <div class="camera-item" id="camera2">
+                <strong>📹 Position 3: Close-up (Frames 60-89)</strong><br>
+                Detailed view of precision harvesting operations. Shows gripper mechanisms, tomato selection process, and manipulation accuracy.
+            </div>
+            <div class="camera-item" id="camera3">
+                <strong>📹 Position 4: Overview (Frames 90-119)</strong><br>
+                Wide-angle perspective of the entire agricultural facility. Robot integration within the greenhouse ecosystem and workflow.
+            </div>
+            <div class="camera-item" id="camera4">
+                <strong>📹 Position 5: Robot Focus (Frames 120-149)</strong><br>
+                Concentrated view on the AG-4000 robotic system. Industrial design, hydraulic systems, and agricultural automation technology.
+            </div>
+        </div>
+        
+        <div class="robot-specs">
+            <strong>🔧 AG-4000 INDUSTRIAL AGRICULTURAL ROBOT - MULTI-POSITION SPECIFICATIONS:</strong><br>
+            • Camera System: 5 strategic positions for comprehensive monitoring<br>
+            • Position Cycle: 30 frames per camera angle (150 total frames)<br>
+            • Viewing Angles: Front (0°), Side (90°), Close-up (45°), Overview (wide), Focus (30°)<br>
+            • Reach Analysis: 8.2m maximum extension from all viewing perspectives<br>
+            • Precision Tracking: ±0.5mm accuracy verified across all camera positions<br>
+            • Multi-Angle Harvesting: Optimal fruit collection from diverse approach vectors<br>
+            • Environmental Mapping: 360° greenhouse visualization capability<br>
+            • Safety Monitoring: Multiple position verification for collision avoidance
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let totalFrames = 150;
+        let isPlaying = false;
+        let animationInterval;
+        let defaultSpeed = 250; // milliseconds per frame
+
+        // Camera position names
+        const cameraPositions = [
+            'Front View',
+            'Side View', 
+            'Close-up',
+            'Overview',
+            'Robot Focus'
+        ];
+
+        // Harvest schedule (more frequent for longer animation)
+        const harvestFrames = [];
+        for (let i = 0; i < 10; i++) {
+            harvestFrames.push(Math.floor(i * 15 + 20)); // Every 15 frames starting at 20
+        }
+
+        function updateDisplay() {
+            // Update frame image
+            const frameImage = document.getElementById('frameImage');
+            const frameNumber = String(currentFrame).padStart(3, '0');
+            frameImage.src = `multi_position_realistic_farm_frames/multi_position_realistic_frame_${frameNumber}.png`;
+            
+            // Update frame slider
+            document.getElementById('frameSlider').value = currentFrame;
+            
+            // Update stats
+            document.getElementById('currentFrame').textContent = currentFrame + 1;
+            
+            // Calculate harvested tomatoes
+            const harvested = harvestFrames.filter(frame => frame <= currentFrame).length;
+            document.getElementById('harvestedCount').textContent = harvested;
+            
+            // Update camera position (simulate different positions every 30 frames)
+            const cameraIndex = Math.floor(currentFrame / 30) % 5;
+            document.getElementById('cameraPosition').textContent = cameraPositions[cameraIndex];
+            
+            // Highlight active camera
+            for (let i = 0; i < 5; i++) {
+                const cameraElement = document.getElementById(`camera${i}`);
+                if (i === cameraIndex) {
+                    cameraElement.classList.add('camera-active');
+                } else {
+                    cameraElement.classList.remove('camera-active');
+                }
+            }
+            
+            // Determine operation status (cycles every 25 frames)
+            const frameInCycle = currentFrame % 25;
+            const statusIndicator = document.getElementById('statusIndicator');
+            let operation, statusClass;
+            
+            if (frameInCycle < 8) {
+                operation = 'APPROACHING';
+                statusClass = 'status-approaching';
+            } else if (frameInCycle < 15) {
+                operation = 'HARVESTING';
+                statusClass = 'status-harvesting';
+            } else if (frameInCycle < 20) {
+                operation = 'COLLECTING';
+                statusClass = 'status-collecting';
+            } else {
+                operation = 'RETURNING';
+                statusClass = 'status-returning';
+            }
+            
+            document.getElementById('operationStatus').textContent = operation;
+            statusIndicator.className = `status-indicator ${statusClass}`;
+        }
+
+        function togglePlay() {
+            const playBtn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                // Stop animation
+                clearInterval(animationInterval);
+                isPlaying = false;
+                playBtn.textContent = '▶️ Play';
+            } else {
+                // Start animation
+                const speed = parseFloat(document.getElementById('speedInput').value) || 1;
+                const interval = defaultSpeed / speed;
+                
+                animationInterval = setInterval(() => {
+                    currentFrame = (currentFrame + 1) % totalFrames;
+                    updateDisplay();
+                }, interval);
+                
+                isPlaying = true;
+                playBtn.textContent = '⏸️ Pause';
+            }
+        }
+
+        function resetAnimation() {
+            if (isPlaying) {
+                togglePlay();
+            }
+            currentFrame = 0;
+            updateDisplay();
+        }
+
+        function seekFrame(frame) {
+            currentFrame = parseInt(frame);
+            updateDisplay();
+        }
+
+        function goToFrame() {
+            const frameInput = document.getElementById('frameInput');
+            const frame = parseInt(frameInput.value);
+            
+            if (frame >= 0 && frame < totalFrames) {
+                currentFrame = frame;
+                updateDisplay();
+                frameInput.value = '';
+            } else {
+                alert(`Please enter a frame number between 0 and ${totalFrames - 1}`);
+            }
+        }
+
+        function showError() {
+            document.getElementById('frameImage').alt = 'Error loading frame. Please run the simulation first.';
+            document.querySelector('.viewer-container').innerHTML = `
+                <div class="loading">
+                    <h2>🚨 Realistic Farm Frames Loading...</h2>
+                    <p>The robot visualization is loading from the realistic farm simulation.</p>
+                    <p>If frames don't appear, run: <code>python3 fast_realistic_farm_robot.py</code></p>
+                </div>
+            `;
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowLeft':
+                    if (currentFrame > 0) {
+                        currentFrame--;
+                        updateDisplay();
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (currentFrame < totalFrames - 1) {
+                        currentFrame++;
+                        updateDisplay();
+                    }
+                    break;
+                case 'Home':
+                    resetAnimation();
+                    break;
+                case 'Digit1':
+                case 'Digit2':
+                case 'Digit3':
+                case 'Digit4':
+                case 'Digit5':
+                    // Jump to specific camera position
+                    const posIndex = parseInt(e.code.slice(-1)) - 1;
+                    currentFrame = posIndex * 30; // 30 frames per position
+                    updateDisplay();
+                    break;
+            }
+        });
+
+        // Speed control
+        document.getElementById('speedInput').addEventListener('change', function() {
+            if (isPlaying) {
+                togglePlay();
+                togglePlay(); // Restart with new speed
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+
+        // Add loading status
+        window.addEventListener('load', function() {
+            console.log('🤖 WORLDLIGHT AGRI CONSULT - Multi-Position Realistic Farm Robot Viewer Loaded');
+            console.log('📹 5 Camera positions available for comprehensive viewing');
+        });
+    </script>
+</body>
+</html>

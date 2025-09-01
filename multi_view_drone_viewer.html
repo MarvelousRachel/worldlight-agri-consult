@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worldlight Agri Consult - Multi-View Drone Visualization</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #2c5530 0%, #4a7c59 50%, #6fa373 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.12)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+        
+        .view-selector {
+            background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .view-tabs {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .view-tab {
+            background: linear-gradient(145deg, #333 0%, #444 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .view-tab:hover {
+            background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+        
+        .view-tab.active {
+            background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .multi-view-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .view-content {
+            display: none;
+            background: linear-gradient(145deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .view-content.active {
+            display: block;
+        }
+        
+        /* Single View Mode */
+        .single-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .main-display {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        /* Split View Mode */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 70vh;
+        }
+        
+        .split-panel {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        /* Quad View Mode */
+        .quad-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 1.5rem;
+            height: 80vh;
+        }
+        
+        .quad-panel {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Picture-in-Picture Mode */
+        .pip-view {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            height: 70vh;
+        }
+        
+        .pip-main {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .pip-overlay {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            border: 3px solid #4CAF50;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.8);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Timeline View */
+        .timeline-view {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .timeline-main {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 50vh;
+            position: relative;
+        }
+        
+        .timeline-strip {
+            background: linear-gradient(145deg, #2a2a2a 0%, #3d3d3d 100%);
+            border-radius: 10px;
+            padding: 1rem;
+            height: 150px;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+        
+        .timeline-frames {
+            display: flex;
+            gap: 8px;
+            height: 100%;
+            padding: 10px 0;
+        }
+        
+        .timeline-frame {
+            flex-shrink: 0;
+            width: 120px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .timeline-frame:hover {
+            transform: scale(1.1);
+            border-color: #4CAF50;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .timeline-frame.current {
+            border-color: #4CAF50;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.6);
+        }
+        
+        .timeline-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .frame-number {
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        /* Comparison View */
+        .comparison-view {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .comparison-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .comparison-slider {
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem 0;
+        }
+        
+        .before-after {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 60vh;
+        }
+        
+        .before-after img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .after-image {
+            clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+            transition: clip-path 0.3s ease;
+        }
+        
+        .comparison-divider {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #4CAF50;
+            transform: translateX(-50%);
+            cursor: col-resize;
+            transition: left 0.3s ease;
+        }
+        
+        .video-frame {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .panel-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .control-panel {
+            background: linear-gradient(145deg, #2a2a2a 0%, #3d3d3d 100%);
+            padding: 1.5rem;
+            border-radius: 0 0 12px 12px;
+            border-top: 2px solid #4CAF50;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            background: linear-gradient(145deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(145deg, #45a049 0%, #3e8e41 100%);
+            transform: translateY(-2px);
+        }
+        
+        .control-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-container {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 8px;
+            margin: 0 1rem;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #4CAF50 0%, #81C784 100%);
+            height: 8px;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .frame-info {
+            color: #e0e0e0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            border-radius: 12px;
+            z-index: 10;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .stats-panel {
+            background: linear-gradient(145deg, #2d5016 0%, #4a7c59 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #81C784;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .split-view, .quad-view {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .quad-view {
+                grid-template-rows: repeat(4, 300px);
+            }
+            
+            .pip-overlay {
+                width: 200px;
+                height: 130px;
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>🌱 Worldlight Agri Consult</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="our-expertise.html">Our Expertise</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <h1>🎬 Multi-View Drone Visualization</h1>
+            <p class="lead">Experience agricultural drone technology from every angle</p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <span style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #4CAF50;">🎯 AERIAL PERSPECTIVE</span>
+                <span style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #4CAF50;">🌱 GRASS FIELD</span>
+                <span style="background: rgba(76, 175, 80, 0.2); color: #4CAF50; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #4CAF50;">💧 SPRAY SYSTEM</span>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="multi-view-container">
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <div class="stat-value">200</div>
+                    <div class="stat-label">Total Frames</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4K</div>
+                    <div class="stat-label">Resolution</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">140</div>
+                    <div class="stat-label">Spray Frames</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">View Modes</div>
+                </div>
+            </div>
+            
+            <div class="view-selector">
+                <div class="view-tabs">
+                    <button class="view-tab active" data-view="single">
+                        🎬 Single View
+                    </button>
+                    <button class="view-tab" data-view="split">
+                        ⚡ Split View
+                    </button>
+                    <button class="view-tab" data-view="quad">
+                        🎯 Quad View
+                    </button>
+                    <button class="view-tab" data-view="pip">
+                        📺 Picture-in-Picture
+                    </button>
+                    <button class="view-tab" data-view="timeline">
+                        ⏱️ Timeline
+                    </button>
+                    <button class="view-tab" data-view="comparison">
+                        🔄 Comparison
+                    </button>
+                </div>
+            </div>
+
+            <!-- Single View Mode -->
+            <div class="view-content active" id="single-view">
+                <div class="single-view">
+                    <div class="main-display">
+                        <div class="loading-overlay" id="loadingOverlay">
+                            <div class="loading-spinner"></div>
+                            <p>Loading photorealistic aerial frames...</p>
+                        </div>
+                        <img id="mainFrame" class="video-frame" alt="Photorealistic Aerial Drone Simulation">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split View Mode -->
+            <div class="view-content" id="split-view">
+                <div class="split-view">
+                    <div class="split-panel">
+                        <div class="panel-label">🚁 Current Frame</div>
+                        <img id="splitFrame1" class="video-frame" alt="Current Frame">
+                    </div>
+                    <div class="split-panel">
+                        <div class="panel-label">🔄 Previous Frame</div>
+                        <img id="splitFrame2" class="video-frame" alt="Previous Frame">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quad View Mode -->
+            <div class="view-content" id="quad-view">
+                <div class="quad-view">
+                    <div class="quad-panel">
+                        <div class="panel-label">🚁 Current</div>
+                        <img id="quadFrame1" class="video-frame" alt="Current Frame">
+                    </div>
+                    <div class="quad-panel">
+                        <div class="panel-label">⏮️ -10 Frames</div>
+                        <img id="quadFrame2" class="video-frame" alt="Frame -10">
+                    </div>
+                    <div class="quad-panel">
+                        <div class="panel-label">⏭️ +10 Frames</div>
+                        <img id="quadFrame3" class="video-frame" alt="Frame +10">
+                    </div>
+                    <div class="quad-panel">
+                        <div class="panel-label">🎯 Key Frame</div>
+                        <img id="quadFrame4" class="video-frame" alt="Key Frame">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Picture-in-Picture View -->
+            <div class="view-content" id="pip-view">
+                <div class="pip-view">
+                    <img id="pipMain" class="pip-main" alt="Main View">
+                    <div class="pip-overlay">
+                        <img id="pipOverlay" class="video-frame" alt="Picture-in-Picture">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline View -->
+            <div class="view-content" id="timeline-view">
+                <div class="timeline-view">
+                    <div class="timeline-main">
+                        <img id="timelineMain" class="video-frame" alt="Timeline Main View">
+                    </div>
+                    <div class="timeline-strip">
+                        <div class="timeline-frames" id="timelineFrames">
+                            <!-- Timeline frames will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison View -->
+            <div class="view-content" id="comparison-view">
+                <div class="comparison-view">
+                    <div class="comparison-controls">
+                        <button class="control-btn" id="comparisonBtn1">🚁 Flying Phase</button>
+                        <button class="control-btn" id="comparisonBtn2">💧 Spraying Phase</button>
+                        <button class="control-btn" id="comparisonBtn3">🎯 End Phase</button>
+                    </div>
+                    <div class="before-after" id="beforeAfter">
+                        <img id="beforeImage" class="video-frame" alt="Before">
+                        <img id="afterImage" class="video-frame after-image" alt="After">
+                        <div class="comparison-divider" id="comparisonDivider"></div>
+                    </div>
+                    <input type="range" class="comparison-slider" id="comparisonSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="frame-info">
+                    <span id="frameInfo">Frame: 0/200 | Status: Loading...</span>
+                </div>
+                
+                <div class="controls">
+                    <button class="control-btn" id="playBtn" disabled>
+                        ▶️ Play
+                    </button>
+                    <button class="control-btn" id="pauseBtn" disabled>
+                        ⏸️ Pause
+                    </button>
+                    <button class="control-btn" id="restartBtn" disabled>
+                        🔄 Restart
+                    </button>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    
+                    <button class="control-btn" id="speedBtn">
+                        ⚡ Speed: 1x
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Worldlight Agri Consult. Advanced Multi-View Agricultural Technology Solutions.</p>
+        </div>
+    </footer>
+
+    <script>
+        class MultiViewDroneViewer {
+            constructor() {
+                this.currentFrame = 0;
+                this.totalFrames = 200;
+                this.isPlaying = false;
+                this.playSpeed = 100;
+                this.speeds = [50, 100, 200, 500];
+                this.currentSpeedIndex = 1;
+                this.intervalId = null;
+                this.currentView = 'single';
+                this.comparisonFrame1 = 20;  // Flying phase
+                this.comparisonFrame2 = 100; // Spraying phase
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadFrames();
+                this.setupTimeline();
+            }
+            
+            initializeElements() {
+                // Main controls
+                this.playBtn = document.getElementById('playBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.restartBtn = document.getElementById('restartBtn');
+                this.speedBtn = document.getElementById('speedBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.frameInfo = document.getElementById('frameInfo');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                
+                // View elements
+                this.mainFrame = document.getElementById('mainFrame');
+                this.splitFrame1 = document.getElementById('splitFrame1');
+                this.splitFrame2 = document.getElementById('splitFrame2');
+                this.quadFrame1 = document.getElementById('quadFrame1');
+                this.quadFrame2 = document.getElementById('quadFrame2');
+                this.quadFrame3 = document.getElementById('quadFrame3');
+                this.quadFrame4 = document.getElementById('quadFrame4');
+                this.pipMain = document.getElementById('pipMain');
+                this.pipOverlay = document.getElementById('pipOverlay');
+                this.timelineMain = document.getElementById('timelineMain');
+                this.beforeImage = document.getElementById('beforeImage');
+                this.afterImage = document.getElementById('afterImage');
+                
+                // Timeline elements
+                this.timelineFrames = document.getElementById('timelineFrames');
+                
+                // Comparison elements
+                this.comparisonSlider = document.getElementById('comparisonSlider');
+                this.comparisonDivider = document.getElementById('comparisonDivider');
+            }
+            
+            setupEventListeners() {
+                // Main controls
+                this.playBtn.addEventListener('click', () => this.play());
+                this.pauseBtn.addEventListener('click', () => this.pause());
+                this.restartBtn.addEventListener('click', () => this.restart());
+                this.speedBtn.addEventListener('click', () => this.toggleSpeed());
+                
+                // View tabs
+                document.querySelectorAll('.view-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchView(e.target.dataset.view));
+                });
+                
+                // Comparison controls
+                document.getElementById('comparisonBtn1').addEventListener('click', () => this.setComparisonFrames(20, 60));
+                document.getElementById('comparisonBtn2').addEventListener('click', () => this.setComparisonFrames(100, 140));
+                document.getElementById('comparisonBtn3').addEventListener('click', () => this.setComparisonFrames(170, 199));
+                
+                // Comparison slider
+                this.comparisonSlider.addEventListener('input', (e) => this.updateComparison(e.target.value));
+                
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.isPlaying ? this.pause() : this.play();
+                            break;
+                        case 'ArrowRight':
+                            this.nextFrame();
+                            break;
+                        case 'ArrowLeft':
+                            this.previousFrame();
+                            break;
+                        case 'Home':
+                            this.restart();
+                            break;
+                        case 'Digit1':
+                            this.switchView('single');
+                            break;
+                        case 'Digit2':
+                            this.switchView('split');
+                            break;
+                        case 'Digit3':
+                            this.switchView('quad');
+                            break;
+                        case 'Digit4':
+                            this.switchView('pip');
+                            break;
+                        case 'Digit5':
+                            this.switchView('timeline');
+                            break;
+                        case 'Digit6':
+                            this.switchView('comparison');
+                            break;
+                    }
+                });
+            }
+            
+            async loadFrames() {
+                console.log('🎬 Loading photorealistic aerial frames...');
+                
+                try {
+                    await this.loadFrame(0);
+                    this.enableControls();
+                    this.loadingOverlay.style.display = 'none';
+                    this.updateAllViews();
+                    console.log('✅ Multi-view frames loaded successfully!');
+                } catch (error) {
+                    console.log('⏳ Frames still generating, will retry...');
+                    setTimeout(() => this.loadFrames(), 2000);
+                }
+            }
+            
+            loadFrame(frameNumber) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    const frameString = frameNumber.toString().padStart(3, '0');
+                    const framePath = `photorealistic_aerial_frames/aerial_frame_${frameString}.png`;
+                    
+                    img.onload = () => resolve(img);
+                    img.onerror = () => reject(new Error(`Frame ${frameNumber} not found`));
+                    img.src = framePath;
+                });
+            }
+            
+            async updateFrame() {
+                try {
+                    const img = await this.loadFrame(this.currentFrame);
+                    this.updateAllViews();
+                } catch (error) {
+                    console.log(`Frame ${this.currentFrame} not ready yet`);
+                }
+            }
+            
+            async updateAllViews() {
+                const frameString = this.currentFrame.toString().padStart(3, '0');
+                const framePath = `photorealistic_aerial_frames/aerial_frame_${frameString}.png`;
+                
+                // Update single view
+                if (this.mainFrame) this.mainFrame.src = framePath;
+                
+                // Update split view
+                if (this.splitFrame1) this.splitFrame1.src = framePath;
+                if (this.splitFrame2 && this.currentFrame > 0) {
+                    const prevFrameString = (this.currentFrame - 1).toString().padStart(3, '0');
+                    this.splitFrame2.src = `photorealistic_aerial_frames/aerial_frame_${prevFrameString}.png`;
+                }
+                
+                // Update quad view
+                if (this.quadFrame1) this.quadFrame1.src = framePath;
+                if (this.quadFrame2 && this.currentFrame >= 10) {
+                    const frame2String = (this.currentFrame - 10).toString().padStart(3, '0');
+                    this.quadFrame2.src = `photorealistic_aerial_frames/aerial_frame_${frame2String}.png`;
+                }
+                if (this.quadFrame3 && this.currentFrame < this.totalFrames - 10) {
+                    const frame3String = (this.currentFrame + 10).toString().padStart(3, '0');
+                    this.quadFrame3.src = `photorealistic_aerial_frames/aerial_frame_${frame3String}.png`;
+                }
+                if (this.quadFrame4) {
+                    const keyFrame = Math.floor(this.currentFrame / 50) * 50;
+                    const keyFrameString = keyFrame.toString().padStart(3, '0');
+                    this.quadFrame4.src = `photorealistic_aerial_frames/aerial_frame_${keyFrameString}.png`;
+                }
+                
+                // Update PiP view
+                if (this.pipMain) this.pipMain.src = framePath;
+                if (this.pipOverlay) {
+                    const overlayFrame = Math.max(0, this.currentFrame - 30);
+                    const overlayFrameString = overlayFrame.toString().padStart(3, '0');
+                    this.pipOverlay.src = `photorealistic_aerial_frames/aerial_frame_${overlayFrameString}.png`;
+                }
+                
+                // Update timeline view
+                if (this.timelineMain) this.timelineMain.src = framePath;
+                this.updateTimelineHighlight();
+                
+                this.updateDisplay();
+            }
+            
+            setupTimeline() {
+                // Create timeline frames (every 10th frame)
+                for (let i = 0; i < this.totalFrames; i += 10) {
+                    const frameDiv = document.createElement('div');
+                    frameDiv.className = 'timeline-frame';
+                    frameDiv.dataset.frame = i;
+                    
+                    const img = document.createElement('img');
+                    const frameString = i.toString().padStart(3, '0');
+                    img.src = `photorealistic_aerial_frames/aerial_frame_${frameString}.png`;
+                    img.alt = `Frame ${i}`;
+                    
+                    const frameNumber = document.createElement('div');
+                    frameNumber.className = 'frame-number';
+                    frameNumber.textContent = i;
+                    
+                    frameDiv.appendChild(img);
+                    frameDiv.appendChild(frameNumber);
+                    
+                    frameDiv.addEventListener('click', () => {
+                        this.currentFrame = i;
+                        this.updateAllViews();
+                    });
+                    
+                    this.timelineFrames.appendChild(frameDiv);
+                }
+            }
+            
+            updateTimelineHighlight() {
+                document.querySelectorAll('.timeline-frame').forEach(frame => {
+                    frame.classList.remove('current');
+                    const frameNum = parseInt(frame.dataset.frame);
+                    if (Math.abs(frameNum - this.currentFrame) <= 5) {
+                        frame.classList.add('current');
+                    }
+                });
+            }
+            
+            switchView(viewName) {
+                // Update active tab
+                document.querySelectorAll('.view-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-view="${viewName}"]`).classList.add('active');
+                
+                // Update active view content
+                document.querySelectorAll('.view-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${viewName}-view`).classList.add('active');
+                
+                this.currentView = viewName;
+                this.updateAllViews();
+            }
+            
+            setComparisonFrames(frame1, frame2) {
+                this.comparisonFrame1 = frame1;
+                this.comparisonFrame2 = frame2;
+                this.updateComparisonImages();
+            }
+            
+            updateComparisonImages() {
+                const frame1String = this.comparisonFrame1.toString().padStart(3, '0');
+                const frame2String = this.comparisonFrame2.toString().padStart(3, '0');
+                
+                if (this.beforeImage) {
+                    this.beforeImage.src = `photorealistic_aerial_frames/aerial_frame_${frame1String}.png`;
+                }
+                if (this.afterImage) {
+                    this.afterImage.src = `photorealistic_aerial_frames/aerial_frame_${frame2String}.png`;
+                }
+            }
+            
+            updateComparison(value) {
+                const percentage = value;
+                if (this.afterImage) {
+                    this.afterImage.style.clipPath = `polygon(${percentage}% 0%, 100% 0%, 100% 100%, ${percentage}% 100%)`;
+                }
+                if (this.comparisonDivider) {
+                    this.comparisonDivider.style.left = `${percentage}%`;
+                }
+            }
+            
+            updateDisplay() {
+                const progress = (this.currentFrame / (this.totalFrames - 1)) * 100;
+                this.progressBar.style.width = `${progress}%`;
+                
+                let status = '🚁 FLYING';
+                if (this.currentFrame >= 30 && this.currentFrame <= 170) {
+                    status = '💧 SPRAYING';
+                } else if (this.currentFrame > 170) {
+                    status = '🎯 LANDING';
+                }
+                
+                this.frameInfo.textContent = `Frame: ${this.currentFrame + 1}/${this.totalFrames} | ${status} | View: ${this.currentView.toUpperCase()}`;
+            }
+            
+            play() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                this.playBtn.disabled = true;
+                this.pauseBtn.disabled = false;
+                
+                this.intervalId = setInterval(() => {
+                    this.currentFrame++;
+                    if (this.currentFrame >= this.totalFrames) {
+                        this.currentFrame = this.totalFrames - 1;
+                        this.pause();
+                        return;
+                    }
+                    this.updateFrame();
+                }, this.playSpeed);
+            }
+            
+            pause() {
+                this.isPlaying = false;
+                this.playBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+                
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = null;
+                }
+            }
+            
+            restart() {
+                this.pause();
+                this.currentFrame = 0;
+                this.updateFrame();
+            }
+            
+            nextFrame() {
+                if (this.currentFrame < this.totalFrames - 1) {
+                    this.currentFrame++;
+                    this.updateFrame();
+                }
+            }
+            
+            previousFrame() {
+                if (this.currentFrame > 0) {
+                    this.currentFrame--;
+                    this.updateFrame();
+                }
+            }
+            
+            toggleSpeed() {
+                this.currentSpeedIndex = (this.currentSpeedIndex + 1) % this.speeds.length;
+                this.playSpeed = this.speeds[this.currentSpeedIndex];
+                
+                const speedLabels = ['4x', '2x', '1x', '0.5x'];
+                this.speedBtn.innerHTML = `⚡ Speed: ${speedLabels[this.currentSpeedIndex]}`;
+                
+                if (this.isPlaying) {
+                    this.pause();
+                    this.play();
+                }
+            }
+            
+            enableControls() {
+                this.playBtn.disabled = false;
+                this.restartBtn.disabled = false;
+            }
+        }
+        
+        // Initialize the multi-view viewer when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MultiViewDroneViewer();
+        });
+        
+        console.log('🎬 MULTI-VIEW DRONE VIEWER INITIALIZED 🚁');
+        console.log('🎯 6 View Modes: Single | Split | Quad | PiP | Timeline | Comparison');
+        console.log('⌨️  Controls: SPACE (play/pause), ← → (frame), 1-6 (views), HOME (restart)');
+    </script>
+</body>
+</html>

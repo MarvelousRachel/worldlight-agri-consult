@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worldlight Agri Consult - Live Drone Spraying Simulation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+        
+        .simulation-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+        
+        .farm-canvas {
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            background: #2E7D32;
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+        
+        .tomato-plant {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            border: 1px solid #2E7D32;
+            transition: all 0.5s ease;
+        }
+        
+        .tomato-plant.pest-infected {
+            background: #FF9800;
+            box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+        }
+        
+        .tomato-plant.treated {
+            background: #8BC34A;
+            box-shadow: 0 0 6px rgba(139, 195, 74, 0.8);
+        }
+        
+        .tomato-plant.healthy {
+            background: #4CAF50;
+            box-shadow: 0 0 4px rgba(76, 175, 80, 0.6);
+        }
+        
+        .tomato-fruit {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #F44336;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .drone {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #212121;
+            border-radius: 50%;
+            border: 3px solid #FFC107;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        
+        .drone::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 2px solid #FFC107;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: rotor-spin 0.2s linear infinite;
+        }
+        
+        .drone::after {
+            content: '🚁';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+        
+        @keyframes rotor-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .spray-droplet {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #2196F3;
+            border-radius: 50%;
+            z-index: 50;
+            animation: droplet-fall 1.5s linear forwards;
+            opacity: 0.8;
+            box-shadow: 0 0 4px rgba(33, 150, 243, 0.6);
+        }
+        
+        @keyframes droplet-fall {
+            0% {
+                transform: translateY(0);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(60px);
+                opacity: 0;
+            }
+        }
+        
+        .flight-path {
+            position: absolute;
+            border-top: 2px dashed #FFC107;
+            opacity: 0.6;
+            z-index: 10;
+        }
+        
+        .control-panel {
+            background: #263238;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: #37474F;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+        
+        .btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #F57C00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #37474F;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+        
+        .weather-info {
+            background: #1976D2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .weather-info h3 {
+            margin: 0 0 10px 0;
+            color: #E3F2FD;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-warning {
+            background: #FF9800;
+        }
+        
+        .status-error {
+            background: #F44336;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .field-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 200;
+        }
+        
+        .drone-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,193,7,0.9);
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 200;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚁 Worldlight Agri Consult 🍅</h1>
+        <p>Live Drone Spraying Simulation - Tomato Farm Protection</p>
+        <p><strong>Real Technology • Real Results • Real ROI</strong></p>
+    </div>
+
+    <div class="simulation-container">
+        <div class="controls">
+            <button class="btn btn-primary" onclick="startSprayingOperation()">
+                🚁 Start Spraying Operation
+            </button>
+            <button class="btn btn-secondary" onclick="pauseOperation()">
+                ⏸️ Pause Operation
+            </button>
+            <button class="btn btn-warning" onclick="resetSimulation()">
+                🔄 Reset Simulation
+            </button>
+            <button class="btn btn-primary" onclick="showPestInfestation()">
+                🐛 Show Pest Problems
+            </button>
+        </div>
+
+        <div class="farm-canvas" id="farmCanvas">
+            <div class="field-info">
+                <strong>Tomato Farm - Sector A</strong><br>
+                Area: 5 hectares<br>
+                Plants: 2,500 tomato plants<br>
+                Growth Stage: Flowering
+            </div>
+            <div class="drone-info" id="droneInfo">
+                <div><span class="status-indicator status-active"></span>AGRI-SPRAY-01</div>
+                <div>Altitude: 15m</div>
+                <div>Speed: 5 m/s</div>
+                <div>Tank: <span id="tankLevel">100</span>%</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px; color: #666;">
+            <strong>Spraying Progress: <span id="progressText">0%</span></strong>
+        </div>
+    </div>
+
+    <div class="control-panel">
+        <h2>🔧 Operation Control Center</h2>
+        
+        <div class="weather-info">
+            <h3>🌤️ Weather Conditions - Optimal for Spraying</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                <div><strong>Wind:</strong> 3 mph SW</div>
+                <div><strong>Temperature:</strong> 75°F</div>
+                <div><strong>Humidity:</strong> 65%</div>
+                <div><strong>Visibility:</strong> Excellent</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="plantsSprayedCount">0</div>
+                <div class="stat-label">Plants Treated</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="areasCovered">0</div>
+                <div class="stat-label">Areas Covered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="flightTime">0</div>
+                <div class="stat-label">Flight Time (min)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pestControlRate">0</div>
+                <div class="stat-label">Pest Control %</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$2,400</div>
+                <div class="stat-label">Cost Savings/ha</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">95%</div>
+                <div class="stat-label">Precision Rate</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h3>📊 Operation Details</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div>
+                    <strong>Chemical Application:</strong><br>
+                    • Fungicide: Organic Copper Oxychloride<br>
+                    • Concentration: 0.2% solution<br>
+                    • Application Rate: 200L/hectare<br>
+                    • Droplet Size: 250-300 microns
+                </div>
+                <div>
+                    <strong>Drone Specifications:</strong><br>
+                    • Model: AGRI-PRO 3000<br>
+                    • Tank Capacity: 30 liters<br>
+                    • Flight Time: 45 minutes<br>
+                    • Coverage Rate: 15 hectares/hour
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TomatoFarmSimulation {
+            constructor() {
+                this.canvas = document.getElementById('farmCanvas');
+                this.plants = [];
+                this.drone = null;
+                this.isRunning = false;
+                this.currentPath = 0;
+                this.flightPaths = [];
+                this.sprayedPlants = 0;
+                this.startTime = null;
+                this.tankLevel = 100;
+                
+                this.initializeFarm();
+                this.createFlightPaths();
+                this.createDrone();
+            }
+            
+            initializeFarm() {
+                // Create tomato plants in realistic farm rows
+                const canvasRect = this.canvas.getBoundingClientRect();
+                const canvasWidth = 800; // Approximate canvas width
+                const canvasHeight = 600; // Approximate canvas height
+                
+                // Create rows of tomato plants
+                for (let row = 0; row < 12; row++) {
+                    for (let col = 0; col < 25; col++) {
+                        const x = 40 + col * 30;
+                        const y = 60 + row * 45;
+                        
+                        if (x < canvasWidth - 40 && y < canvasHeight - 40) {
+                            const plant = this.createTomatoPlant(x, y, row, col);
+                            this.plants.push(plant);
+                            this.canvas.appendChild(plant.element);
+                        }
+                    }
+                }
+                
+                console.log(`Created ${this.plants.length} tomato plants`);
+            }
+            
+            createTomatoPlant(x, y, row, col) {
+                const plantElement = document.createElement('div');
+                plantElement.className = 'tomato-plant';
+                plantElement.style.left = x + 'px';
+                plantElement.style.top = y + 'px';
+                
+                // Random pest infestation (20% of plants)
+                const isPestInfected = Math.random() < 0.2;
+                if (isPestInfected) {
+                    plantElement.classList.add('pest-infected');
+                }
+                
+                // Add tomato fruits
+                for (let i = 0; i < Math.floor(Math.random() * 6) + 3; i++) {
+                    const fruit = document.createElement('div');
+                    fruit.className = 'tomato-fruit';
+                    fruit.style.left = (x + Math.random() * 8 - 4) + 'px';
+                    fruit.style.top = (y + Math.random() * 8 - 4) + 'px';
+                    this.canvas.appendChild(fruit);
+                }
+                
+                return {
+                    element: plantElement,
+                    x: x,
+                    y: y,
+                    row: row,
+                    col: col,
+                    isPestInfected: isPestInfected,
+                    isSprayedz: false,
+                    sprayTime: null
+                };
+            }
+            
+            createFlightPaths() {
+                // Create back-and-forth flight pattern
+                const rows = [100, 145, 190, 235, 280, 325, 370, 415, 460, 505];
+                
+                for (let i = 0; i < rows.length; i++) {
+                    const y = rows[i];
+                    
+                    if (i % 2 === 0) {
+                        // Left to right
+                        for (let x = 50; x <= 750; x += 10) {
+                            this.flightPaths.push({x: x, y: y});
+                        }
+                    } else {
+                        // Right to left
+                        for (let x = 750; x >= 50; x -= 10) {
+                            this.flightPaths.push({x: x, y: y});
+                        }
+                    }
+                }
+                
+                console.log(`Created flight path with ${this.flightPaths.length} waypoints`);
+            }
+            
+            createDrone() {
+                this.drone = document.createElement('div');
+                this.drone.className = 'drone';
+                this.drone.style.left = '50px';
+                this.drone.style.top = '80px';
+                this.canvas.appendChild(this.drone);
+            }
+            
+            startSprayingOperation() {
+                if (this.isRunning) return;
+                
+                this.isRunning = true;
+                this.startTime = Date.now();
+                this.currentPath = 0;
+                
+                console.log('Starting spraying operation...');
+                this.flyDrone();
+            }
+            
+            pauseOperation() {
+                this.isRunning = false;
+                console.log('Operation paused');
+            }
+            
+            resetSimulation() {
+                this.isRunning = false;
+                this.currentPath = 0;
+                this.sprayedPlants = 0;
+                this.tankLevel = 100;
+                
+                // Reset all plants
+                this.plants.forEach(plant => {
+                    plant.element.className = 'tomato-plant';
+                    if (plant.isPestInfected) {
+                        plant.element.classList.add('pest-infected');
+                    }
+                    plant.isSprayed = false;
+                });
+                
+                // Reset drone position
+                this.drone.style.left = '50px';
+                this.drone.style.top = '80px';
+                
+                // Reset UI
+                this.updateStats();
+                this.updateProgress(0);
+                
+                console.log('Simulation reset');
+            }
+            
+            showPestInfestation() {
+                // Highlight pest-infected plants
+                this.plants.forEach(plant => {
+                    if (plant.isPestInfected) {
+                        plant.element.style.animation = 'pulse 1s infinite';
+                        setTimeout(() => {
+                            plant.element.style.animation = '';
+                        }, 3000);
+                    }
+                });
+            }
+            
+            flyDrone() {
+                if (!this.isRunning || this.currentPath >= this.flightPaths.length) {
+                    if (this.currentPath >= this.flightPaths.length) {
+                        console.log('Spraying operation completed!');
+                        this.isRunning = false;
+                    }
+                    return;
+                }
+                
+                const targetPosition = this.flightPaths[this.currentPath];
+                
+                // Move drone to target position
+                this.drone.style.left = targetPosition.x + 'px';
+                this.drone.style.top = targetPosition.y + 'px';
+                
+                // Spray chemicals
+                this.sprayChemicals(targetPosition.x, targetPosition.y);
+                
+                // Check for nearby plants to treat
+                this.treatNearbyPlants(targetPosition.x, targetPosition.y);
+                
+                // Update tank level
+                this.tankLevel = Math.max(0, this.tankLevel - 0.1);
+                
+                // Update UI
+                this.updateStats();
+                this.updateProgress((this.currentPath / this.flightPaths.length) * 100);
+                
+                this.currentPath++;
+                
+                // Continue to next waypoint
+                setTimeout(() => this.flyDrone(), 150);
+            }
+            
+            sprayChemicals(droneX, droneY) {
+                // Create spray droplets
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        const droplet = document.createElement('div');
+                        droplet.className = 'spray-droplet';
+                        
+                        const dropletX = droneX + (Math.random() - 0.5) * 40;
+                        const dropletY = droneY + 20;
+                        
+                        droplet.style.left = dropletX + 'px';
+                        droplet.style.top = dropletY + 'px';
+                        
+                        this.canvas.appendChild(droplet);
+                        
+                        // Remove droplet after animation
+                        setTimeout(() => {
+                            if (droplet.parentNode) {
+                                droplet.parentNode.removeChild(droplet);
+                            }
+                        }, 1500);
+                    }, i * 50);
+                }
+            }
+            
+            treatNearbyPlants(droneX, droneY) {
+                this.plants.forEach(plant => {
+                    const distance = Math.sqrt(
+                        Math.pow(plant.x - droneX, 2) + 
+                        Math.pow(plant.y - droneY, 2)
+                    );
+                    
+                    if (distance < 30 && !plant.isSprayed) {
+                        plant.isSprayed = true;
+                        plant.sprayTime = Date.now();
+                        this.sprayedPlants++;
+                        
+                        // Update plant appearance
+                        setTimeout(() => {
+                            plant.element.className = 'tomato-plant treated';
+                            
+                            // After some time, make it healthy
+                            setTimeout(() => {
+                                plant.element.className = 'tomato-plant healthy';
+                            }, 2000);
+                        }, 500);
+                    }
+                });
+            }
+            
+            updateStats() {
+                const flightTimeMinutes = this.startTime ? 
+                    Math.floor((Date.now() - this.startTime) / 1000 / 60 * 10) : 0;
+                
+                const areasCovered = Math.floor(this.currentPath / 10);
+                const pestControlRate = this.plants.length > 0 ? 
+                    Math.floor((this.sprayedPlants / this.plants.length) * 100) : 0;
+                
+                document.getElementById('plantsSprayedCount').textContent = this.sprayedPlants;
+                document.getElementById('areasCovered').textContent = areasCovered;
+                document.getElementById('flightTime').textContent = flightTimeMinutes;
+                document.getElementById('pestControlRate').textContent = pestControlRate;
+                document.getElementById('tankLevel').textContent = Math.floor(this.tankLevel);
+            }
+            
+            updateProgress(percentage) {
+                document.getElementById('progressBar').style.width = percentage + '%';
+                document.getElementById('progressText').textContent = Math.floor(percentage) + '%';
+            }
+        }
+        
+        // Global functions for buttons
+        let simulation;
+        
+        function startSprayingOperation() {
+            simulation.startSprayingOperation();
+        }
+        
+        function pauseOperation() {
+            simulation.pauseOperation();
+        }
+        
+        function resetSimulation() {
+            simulation.resetSimulation();
+        }
+        
+        function showPestInfestation() {
+            simulation.showPestInfestation();
+        }
+        
+        // Initialize simulation when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            simulation = new TomatoFarmSimulation();
+            console.log('Tomato Farm Simulation initialized');
+        });
+        
+        // Auto-start demonstration
+        setTimeout(() => {
+            if (simulation) {
+                simulation.startSprayingOperation();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

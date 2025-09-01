@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 WORLDLIGHT AGRI CONSULT - Agricultural Robot Demonstration 🍅</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 50%, #4CAF50 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 3px solid #4CAF50;
+        }
+
+        .viewer-container {
+            position: relative;
+            text-align: center;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 2rem;
+            border: 2px solid #ddd;
+        }
+
+        .frame-display {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 3px solid #2E7D32;
+        }
+
+        .controls {
+            margin: 2rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #f0f0f0;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 2px solid #4CAF50;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            color: #2E7D32;
+        }
+
+        input[type="range"] {
+            width: 300px;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: 2px solid #2E7D32;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: 2px solid #2E7D32;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #4CAF50;
+            text-align: center;
+        }
+
+        .info-card h3 {
+            color: #2E7D32;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .info-card p {
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .feature-item h4 {
+            color: #2E7D32;
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-active { background-color: #4CAF50; }
+        .status-picking { background-color: #FF9800; }
+        .status-complete { background-color: #2196F3; }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            input[type="range"] {
+                width: 250px;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 WORLDLIGHT AGRI CONSULT</h1>
+        <p>Professional Agricultural Robot Demonstration - Precision Tomato Harvesting Technology</p>
+    </div>
+
+    <div class="container">
+        <div class="demo-section">
+            <h2 style="text-align: center; color: #2E7D32; margin-bottom: 2rem;">🍅 Agricultural Robot Live Demonstration</h2>
+            
+            <div class="viewer-container">
+                <img id="robotFrame" class="frame-display" src="agricultural_robot_frames/robot_frame_000.png" alt="Agricultural Robot Frame">
+                
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="frameSlider">Frame:</label>
+                        <input type="range" id="frameSlider" min="0" max="149" value="0">
+                        <span id="frameNumber">1 / 150</span>
+                    </div>
+                    
+                    <div class="control-group">
+                        <button class="btn" onclick="playAnimation()">▶ Play</button>
+                        <button class="btn" onclick="pauseAnimation()">⏸ Pause</button>
+                        <button class="btn" onclick="resetAnimation()">⏮ Reset</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="speedSlider">Speed:</label>
+                        <input type="range" id="speedSlider" min="50" max="500" value="200">
+                        <span id="speedValue">200ms</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-card">
+                    <h3>🎯 Current Operation</h3>
+                    <p id="currentOperation">
+                        <span class="status-indicator status-active"></span>
+                        Scanning Field
+                    </p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>📊 Harvesting Progress</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="harvestStats">0 / 55 tomatoes harvested</p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>⚡ Robot Status</h3>
+                    <p id="robotStatus">
+                        <span class="status-indicator status-active"></span>
+                        Operational
+                    </p>
+                </div>
+                
+                <div class="info-card">
+                    <h3>🔧 Arm Configuration</h3>
+                    <p>4-Segment Articulated</p>
+                    <p>Industrial Grade Precision</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2 style="text-align: center; color: #2E7D32; margin-bottom: 2rem;">🌟 Technology Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <h4>🤖 Industrial Robotic Arm</h4>
+                    <p>4-segment articulated arm with professional-grade inverse kinematics for precise tomato harvesting operations.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <h4>� Realistic Tomato Recognition</h4>
+                    <p>Advanced vision system identifies ripe tomatoes with color-based ripeness assessment and quality sorting.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <h4>🎯 Precision Targeting</h4>
+                    <p>Automated target acquisition with visual feedback and coordinated approach sequences for optimal harvesting.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <h4>⚙️ Adaptive Gripper System</h4>
+                    <p>Intelligent gripper with force feedback, proximity sensors, and gentle handling for delicate fruit harvesting.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <h4>📈 Real-time Monitoring</h4>
+                    <p>Live status monitoring, progress tracking, and efficiency metrics for professional agricultural operations.</p>
+                </div>
+                
+                <div class="feature-item">
+                    <h4>🌱 Professional Agriculture</h4>
+                    <p>Designed for commercial farming operations with scalable automation and increased productivity.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2 style="text-align: center; color: #2E7D32; margin-bottom: 1rem;">💼 Business Applications</h2>
+            <div style="text-align: center;">
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #555;">
+                    This agricultural robot demonstration showcases cutting-edge automation technology for modern farming operations. 
+                    The system demonstrates precision harvesting, quality assessment, and efficient collection processes that can 
+                    significantly increase productivity while reducing labor costs and improving harvest quality.
+                </p>
+                <br>
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #555;">
+                    Perfect for large-scale agricultural operations, greenhouse automation, and precision farming initiatives 
+                    seeking to modernize their harvesting processes with reliable, efficient robotic solutions.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        const totalFrames = 150;
+        let isPlaying = false;
+        let animationInterval;
+        let animationSpeed = 200;
+
+        const frameSlider = document.getElementById('frameSlider');
+        const frameNumber = document.getElementById('frameNumber');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const robotFrame = document.getElementById('robotFrame');
+        const progressFill = document.getElementById('progressFill');
+        const harvestStats = document.getElementById('harvestStats');
+        const currentOperation = document.getElementById('currentOperation');
+        const robotStatus = document.getElementById('robotStatus');
+
+        function updateFrame(frame) {
+            currentFrame = frame;
+            frameSlider.value = frame;
+            frameNumber.textContent = `${frame + 1} / ${totalFrames}`;
+            
+            // Update image
+            const paddedFrame = frame.toString().padStart(3, '0');
+            robotFrame.src = `agricultural_robot_frames/robot_frame_${paddedFrame}.png`;
+            
+            // Update progress and stats
+            const progress = (frame / totalFrames) * 100;
+            progressFill.style.width = `${progress}%`;
+            
+            // Simulate harvesting progress (based on the actual simulation results)
+            let harvestedCount = 0;
+            if (frame >= 21) harvestedCount = Math.min(20, frame - 20);
+            if (frame >= 46) harvestedCount = Math.min(40, harvestedCount + (frame - 45));
+            if (frame >= 71) harvestedCount = Math.min(55, harvestedCount + (frame - 70));
+            
+            harvestStats.textContent = `${harvestedCount} / 55 tomatoes harvested`;
+            
+            // Update operation status
+            let operation, statusClass;
+            if (frame < 25) {
+                operation = "Scanning Field";
+                statusClass = "status-active";
+            } else if (frame < 75) {
+                operation = "Harvesting Tomatoes";
+                statusClass = "status-picking";
+            } else {
+                operation = "Collection Complete";
+                statusClass = "status-complete";
+            }
+            
+            currentOperation.innerHTML = `<span class="status-indicator ${statusClass}"></span>${operation}`;
+            robotStatus.innerHTML = `<span class="status-indicator status-active"></span>Operational`;
+        }
+
+        function playAnimation() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            animationInterval = setInterval(() => {
+                if (currentFrame >= totalFrames - 1) {
+                    pauseAnimation();
+                    return;
+                }
+                updateFrame(currentFrame + 1);
+            }, animationSpeed);
+        }
+
+        function pauseAnimation() {
+            isPlaying = false;
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+        }
+
+        function resetAnimation() {
+            pauseAnimation();
+            updateFrame(0);
+        }
+
+        // Event listeners
+        frameSlider.addEventListener('input', (e) => {
+            pauseAnimation();
+            updateFrame(parseInt(e.target.value));
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            animationSpeed = parseInt(e.target.value);
+            speedValue.textContent = `${animationSpeed}ms`;
+            
+            if (isPlaying) {
+                pauseAnimation();
+                playAnimation();
+            }
+        });
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    if (isPlaying) pauseAnimation();
+                    else playAnimation();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.max(0, currentFrame - 1));
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    pauseAnimation();
+                    updateFrame(Math.min(totalFrames - 1, currentFrame + 1));
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    resetAnimation();
+                    break;
+            }
+        });
+
+        // Initialize
+        updateFrame(0);
+    </script>
+</body>
+</html>

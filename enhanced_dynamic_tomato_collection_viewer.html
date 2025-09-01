@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Dynamic Tomato Harvesting with Collection Display</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2d5a27 0%, #4a7c59 50%, #85c88a 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #4CAF50;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: linear-gradient(45deg, #4CAF50, #8BC34A, #CDDC39);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            margin: 15px 0;
+            color: #A5D6A7;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .viewer-container {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            border: 3px solid #4CAF50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viewer-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(76, 175, 80, 0.1), rgba(139, 195, 74, 0.1));
+            pointer-events: none;
+        }
+
+        .frame-display {
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 2px solid #333;
+        }
+
+        .animation-frame {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+            border: 3px solid #4CAF50;
+            background: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 5px;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #66BB6A, #4CAF50);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn.pause {
+            background: linear-gradient(45deg, #FF5722, #FF7043);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .btn.pause:hover {
+            background: linear-gradient(45deg, #FF7043, #FF5722);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .speed-slider {
+            width: 120px;
+            height: 8px;
+            border-radius: 5px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .status-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .status-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .status-label {
+            font-size: 0.9em;
+            color: #A5D6A7;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #C8E6C9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A, #CDDC39);
+            transition: width 0.3s ease;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .collection-status {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .keyboard-shortcuts {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .keyboard-shortcuts h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+
+        .key {
+            background: #333;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .loading {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .collection-highlight {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍅 Enhanced Dynamic Tomato Harvesting</h1>
+            <div class="subtitle">🤖 AG-HARVEST 4000 with Collection Display | Advanced Agricultural Robotics</div>
+            <div class="collection-status" id="collectionStatus">
+                🏆 Harvested Tomatoes: <span id="harvestedCount">0</span>/3 | Watch them collect in the basket!
+            </div>
+        </div>
+
+        <div class="viewer-container">
+            <div class="frame-display">
+                <img id="animationFrame" class="animation-frame" src="enhanced_tomato_harvest_frames/enhanced_harvest_000.png" alt="Enhanced Tomato Harvesting Animation">
+                <div class="loading" id="loading">Loading frames...</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="playPauseBtn" onclick="togglePlayPause()">▶️ PLAY</button>
+                <button class="btn" id="prevBtn" onclick="previousFrame()">⏮️ PREVIOUS</button>
+                <button class="btn" id="nextBtn" onclick="nextFrame()">⏭️ NEXT</button>
+                <button class="btn" id="resetBtn" onclick="resetAnimation()">🔄 RESET</button>
+                
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" id="speedSlider" class="speed-slider" min="0.25" max="3" step="0.25" value="1" onchange="updateSpeed()">
+                    <span id="speedDisplay">1.0x</span>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="status-display">
+                <div class="status-item">
+                    <div class="status-label">Current Frame</div>
+                    <div class="status-value" id="currentFrame">1</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Total Frames</div>
+                    <div class="status-value" id="totalFrames">120</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Current Cycle</div>
+                    <div class="status-value" id="currentCycle">1</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Harvesting Phase</div>
+                    <div class="status-value" id="harvestingPhase">Approaching</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Collection Progress</div>
+                    <div class="status-value" id="collectionProgress">0%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Animation Status</div>
+                    <div class="status-value" id="animationStatus">Ready</div>
+                </div>
+            </div>
+
+            <div class="keyboard-shortcuts">
+                <h3>🎮 Keyboard Controls</h3>
+                <div class="shortcut-item">
+                    <span>Play/Pause Animation</span>
+                    <span class="key">SPACEBAR</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Next Frame</span>
+                    <span class="key">→</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Previous Frame</span>
+                    <span class="key">←</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Reset to Start</span>
+                    <span class="key">R</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Jump to Cycle 1</span>
+                    <span class="key">1</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Jump to Cycle 2</span>
+                    <span class="key">2</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Jump to Cycle 3</span>
+                    <span class="key">3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let totalFrames = 120;
+        let isPlaying = false;
+        let animationInterval;
+        let animationSpeed = 1.0;
+        let framesPerSecond = 10;
+
+        const phases = {
+            0: "🚀 Approaching",
+            10: "🎯 Targeting", 
+            20: "✋ Grasping",
+            30: "📦 Harvesting",
+            40: "🔄 Reset"
+        };
+
+        function updateDisplay() {
+            const frameImg = document.getElementById('animationFrame');
+            const frameNumber = String(currentFrame).padStart(3, '0');
+            frameImg.src = `enhanced_tomato_harvest_frames/enhanced_harvest_${frameNumber}.png`;
+            
+            // Update status displays
+            document.getElementById('currentFrame').textContent = currentFrame + 1;
+            document.getElementById('totalFrames').textContent = totalFrames;
+            
+            const cycle = Math.floor(currentFrame / 40) + 1;
+            document.getElementById('currentCycle').textContent = cycle;
+            
+            const frameInCycle = currentFrame % 40;
+            let phase = "🚀 Approaching";
+            if (frameInCycle >= 30) phase = "📦 Harvesting";
+            else if (frameInCycle >= 20) phase = "✋ Grasping";
+            else if (frameInCycle >= 10) phase = "🎯 Targeting";
+            
+            document.getElementById('harvestingPhase').textContent = phase;
+            
+            // Update progress bar
+            const progress = ((currentFrame + 1) / totalFrames) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Update harvested count based on completed cycles
+            const completedCycles = Math.floor((currentFrame + 1) / 40);
+            const harvestedCount = Math.min(completedCycles, 3);
+            document.getElementById('harvestedCount').textContent = harvestedCount;
+            
+            // Update collection progress
+            const collectionProgress = (harvestedCount / 3) * 100;
+            document.getElementById('collectionProgress').textContent = Math.round(collectionProgress) + '%';
+            
+            // Highlight collection status when tomatoes are harvested
+            const collectionStatus = document.getElementById('collectionStatus');
+            if (harvestedCount > 0) {
+                collectionStatus.classList.add('collection-highlight');
+            }
+            
+            // Update animation status
+            document.getElementById('animationStatus').textContent = isPlaying ? 'Playing' : 'Paused';
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                pauseAnimation();
+            } else {
+                playAnimation();
+            }
+        }
+
+        function playAnimation() {
+            if (!isPlaying) {
+                isPlaying = true;
+                document.getElementById('playPauseBtn').innerHTML = '⏸️ PAUSE';
+                document.getElementById('playPauseBtn').classList.add('pause');
+                animationInterval = setInterval(() => {
+                    nextFrame();
+                }, 1000 / (framesPerSecond * animationSpeed));
+            }
+        }
+
+        function pauseAnimation() {
+            if (isPlaying) {
+                isPlaying = false;
+                document.getElementById('playPauseBtn').innerHTML = '▶️ PLAY';
+                document.getElementById('playPauseBtn').classList.remove('pause');
+                clearInterval(animationInterval);
+            }
+        }
+
+        function nextFrame() {
+            currentFrame = (currentFrame + 1) % totalFrames;
+            updateDisplay();
+        }
+
+        function previousFrame() {
+            currentFrame = (currentFrame - 1 + totalFrames) % totalFrames;
+            updateDisplay();
+        }
+
+        function resetAnimation() {
+            pauseAnimation();
+            currentFrame = 0;
+            updateDisplay();
+        }
+
+        function updateSpeed() {
+            const slider = document.getElementById('speedSlider');
+            animationSpeed = parseFloat(slider.value);
+            document.getElementById('speedDisplay').textContent = animationSpeed.toFixed(1) + 'x';
+            
+            if (isPlaying) {
+                clearInterval(animationInterval);
+                animationInterval = setInterval(() => {
+                    nextFrame();
+                }, 1000 / (framesPerSecond * animationSpeed));
+            }
+        }
+
+        function jumpToCycle(cycleNumber) {
+            pauseAnimation();
+            currentFrame = (cycleNumber - 1) * 40;
+            updateDisplay();
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(event) {
+            switch(event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'ArrowRight':
+                    event.preventDefault();
+                    pauseAnimation();
+                    nextFrame();
+                    break;
+                case 'ArrowLeft':
+                    event.preventDefault();
+                    pauseAnimation();
+                    previousFrame();
+                    break;
+                case 'KeyR':
+                    event.preventDefault();
+                    resetAnimation();
+                    break;
+                case 'Digit1':
+                    event.preventDefault();
+                    jumpToCycle(1);
+                    break;
+                case 'Digit2':
+                    event.preventDefault();
+                    jumpToCycle(2);
+                    break;
+                case 'Digit3':
+                    event.preventDefault();
+                    jumpToCycle(3);
+                    break;
+            }
+        });
+
+        // Auto-start animation when page loads
+        window.addEventListener('load', function() {
+            updateDisplay();
+            setTimeout(() => {
+                playAnimation();
+            }, 1000);
+        });
+
+        // Preload images for smoother animation
+        function preloadImages() {
+            for (let i = 0; i < totalFrames; i++) {
+                const img = new Image();
+                const frameNumber = String(i).padStart(3, '0');
+                img.src = `enhanced_tomato_harvest_frames/enhanced_harvest_${frameNumber}.png`;
+            }
+        }
+
+        // Start preloading
+        preloadImages();
+    </script>
+</body>
+</html>

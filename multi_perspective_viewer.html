@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚁 Multi-Perspective Drone Viewer - Worldlight Agri Consult</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .viewer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .image-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .main-image {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #5CBF60, #4CAF50);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #FF6B6B, #FF5252) !important;
+        }
+
+        .play-button:hover {
+            background: linear-gradient(45deg, #FF7B7B, #FF6B6B) !important;
+        }
+
+        input[type="range"] {
+            width: 300px;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .frame-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .perspective-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .perspective-card {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .perspective-card h3 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+            font-size: 1.3em;
+        }
+
+        .perspective-card p {
+            margin: 5px 0;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2em;
+            color: #4CAF50;
+            margin: 20px 0;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .control-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            input[type="range"] {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚁 Multi-Perspective Drone Demonstration</h1>
+        <p>Worldlight Agri Consult - Professional Agricultural Technology</p>
+    </div>
+
+    <div class="viewer-container">
+        <div class="frame-info">
+            <strong>Frame: <span id="currentFrame">1</span> / 200</strong>
+            <span style="margin-left: 20px;">Multi-Perspective Agricultural Drone Operation</span>
+        </div>
+
+        <div class="image-display">
+            <img id="mainImage" class="main-image" src="multi_perspective_frames/multi_perspective_frame_000.png" 
+                 alt="Multi-Perspective Drone View" onerror="showError()">
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <button onclick="previousFrame()">⏮️ Previous</button>
+                <button id="playButton" class="play-button" onclick="togglePlay()">▶️ Play</button>
+                <button onclick="nextFrame()">⏭️ Next</button>
+            </div>
+
+            <div class="control-group">
+                <label>Frame:</label>
+                <input type="range" id="frameSlider" min="0" max="199" value="0" 
+                       oninput="goToFrame(this.value)">
+            </div>
+
+            <div class="control-group">
+                <label>Speed:</label>
+                <select id="speedSelect" onchange="changeSpeed()">
+                    <option value="200">Slow (200ms)</option>
+                    <option value="100" selected>Normal (100ms)</option>
+                    <option value="50">Fast (50ms)</option>
+                    <option value="25">Very Fast (25ms)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="perspective-info">
+            <div class="perspective-card">
+                <h3>🌱 Ground Observer View (Bottom Left)</h3>
+                <p><strong>Purpose:</strong> Shows the drone from a farmer's perspective standing in the field</p>
+                <p><strong>Features:</strong> Realistic tomato plants, farm buildings, water tank, irrigation systems</p>
+                <p><strong>View:</strong> Horizontal perspective showing drone flight at working height</p>
+            </div>
+
+            <div class="perspective-card">
+                <h3>⚙️ Technical Side Analysis (Bottom Right)</h3>
+                <p><strong>Purpose:</strong> Engineering and technical analysis of drone operation</p>
+                <p><strong>Features:</strong> Side profile view, spray system visualization, flight mechanics</p>
+                <p><strong>View:</strong> Technical side-view showing altitude, spray patterns, and drone components</p>
+            </div>
+
+            <div class="perspective-card">
+                <h3>🎮 First-Person Pilot View (Top Left)</h3>
+                <p><strong>Purpose:</strong> Drone pilot's control interface and camera feed</p>
+                <p><strong>Features:</strong> HUD display, flight data, battery status, speed indicators</p>
+                <p><strong>View:</strong> Cockpit-style interface with crosshair and telemetry data</p>
+            </div>
+
+            <div class="perspective-card">
+                <h3>🛰️ Aerial Survey View (Top Right)</h3>
+                <p><strong>Purpose:</strong> Agricultural field mapping and crop monitoring</p>
+                <p><strong>Features:</strong> Top-down field view, crop patterns, spray coverage, flight path</p>
+                <p><strong>View:</strong> Satellite-style view showing complete field layout and drone coverage</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingMessage" class="loading" style="display: none;">
+        Loading multi-perspective frame...
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let isPlaying = false;
+        let playInterval = null;
+        let animationSpeed = 100; // milliseconds
+        const totalFrames = 200;
+
+        function updateImage() {
+            const frameNumber = String(currentFrame).padStart(3, '0');
+            const imagePath = `multi_perspective_frames/multi_perspective_frame_${frameNumber}.png`;
+            
+            document.getElementById('loadingMessage').style.display = 'block';
+            
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('mainImage').src = imagePath;
+                document.getElementById('currentFrame').textContent = currentFrame + 1;
+                document.getElementById('frameSlider').value = currentFrame;
+                document.getElementById('loadingMessage').style.display = 'none';
+            };
+            img.onerror = function() {
+                document.getElementById('loadingMessage').style.display = 'none';
+                console.log('Error loading frame:', currentFrame);
+            };
+            img.src = imagePath;
+        }
+
+        function nextFrame() {
+            currentFrame = (currentFrame + 1) % totalFrames;
+            updateImage();
+        }
+
+        function previousFrame() {
+            currentFrame = (currentFrame - 1 + totalFrames) % totalFrames;
+            updateImage();
+        }
+
+        function goToFrame(frameIndex) {
+            currentFrame = parseInt(frameIndex);
+            updateImage();
+        }
+
+        function togglePlay() {
+            const playButton = document.getElementById('playButton');
+            
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playButton.textContent = '▶️ Play';
+                playButton.className = 'play-button';
+                isPlaying = false;
+            } else {
+                playInterval = setInterval(nextFrame, animationSpeed);
+                playButton.textContent = '⏸️ Pause';
+                playButton.className = '';
+                isPlaying = true;
+            }
+        }
+
+        function changeSpeed() {
+            const speedSelect = document.getElementById('speedSelect');
+            animationSpeed = parseInt(speedSelect.value);
+            
+            if (isPlaying) {
+                clearInterval(playInterval);
+                playInterval = setInterval(nextFrame, animationSpeed);
+            }
+        }
+
+        function showError() {
+            document.getElementById('mainImage').alt = 'Error loading multi-perspective frames. Please ensure frames are generated.';
+            document.getElementById('loadingMessage').textContent = 'Error: Multi-perspective frames not found. Please run the simulation first.';
+            document.getElementById('loadingMessage').style.display = 'block';
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case ' ': // Spacebar
+                    event.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowRight':
+                    nextFrame();
+                    break;
+                case 'ArrowLeft':
+                    previousFrame();
+                    break;
+                case 'Home':
+                    currentFrame = 0;
+                    updateImage();
+                    break;
+                case 'End':
+                    currentFrame = totalFrames - 1;
+                    updateImage();
+                    break;
+            }
+        });
+
+        // Initialize
+        updateImage();
+
+        // Preload next few frames for smoother playback
+        function preloadFrames() {
+            for (let i = 1; i <= 5; i++) {
+                const nextFrameIndex = (currentFrame + i) % totalFrames;
+                const frameNumber = String(nextFrameIndex).padStart(3, '0');
+                const img = new Image();
+                img.src = `multi_perspective_frames/multi_perspective_frame_${frameNumber}.png`;
+            }
+        }
+
+        setInterval(preloadFrames, 2000); // Preload every 2 seconds
+    </script>
+</body>
+</html>

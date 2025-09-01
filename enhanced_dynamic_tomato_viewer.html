@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍅 Enhanced Dynamic Tomato Harvesting Robot | Nexus Agri-Tech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1B5E20, #2E7D32, #4CAF50, #66BB6A);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #E8F5E8;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 10px rgba(76, 175, 80, 0.5); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(76, 175, 80, 0.8); }
+        }
+
+        .header p {
+            font-size: 1.4em;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .control-group:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .control-group h3 {
+            margin-bottom: 15px;
+            color: #C8E6C9;
+            font-size: 1.3em;
+        }
+
+        button {
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 5px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #388E3C, #66BB6A);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .play-btn {
+            font-size: 1.3em !important;
+            padding: 18px 35px !important;
+            background: linear-gradient(45deg, #1B5E20, #2E7D32) !important;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        input[type="number"] {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-weight: bold;
+            width: 120px;
+            font-size: 1.1em;
+        }
+
+        .viewer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .frame-display {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .frame-display:hover {
+            transform: scale(1.02);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 25px;
+            border-radius: 18px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #4CAF50, #66BB6A, #81C784);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #C8E6C9;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-top: 8px;
+        }
+
+        .harvesting-sequence {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 30px;
+            border-radius: 25px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .harvesting-sequence h3 {
+            margin-top: 0;
+            color: #C8E6C9;
+            font-size: 1.6em;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .sequence-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .sequence-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 18px;
+            border-left: 6px solid #4CAF50;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sequence-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(8px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .sequence-active {
+            background: rgba(76, 175, 80, 0.25) !important;
+            border-left-color: #81C784 !important;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
+            animation: activeGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes activeGlow {
+            from { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+            to { box-shadow: 0 0 40px rgba(76, 175, 80, 0.6); }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: statusPulse 1.5s infinite;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .status-scanning { background-color: #FFC107; }
+        .status-targeting { background-color: #FF9800; }
+        .status-grasping { background-color: #F44336; }
+        .status-harvesting { background-color: #4CAF50; }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .loading h2 {
+            color: #FFC107;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍅 Enhanced Dynamic Tomato Harvesting Robot</h1>
+            <p>Advanced Agricultural Automation | Real-Time Process Visualization | Ultra-Realistic Farm Environment</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <h3>🎮 Animation Controls</h3>
+                <button id="playBtn" class="play-btn" onclick="togglePlay()">▶️ Play Animation</button>
+                <button onclick="resetAnimation()">⏮️ Reset</button>
+                <button onclick="prevFrame()">⏪ Previous</button>
+                <button onclick="nextFrame()">⏩ Next</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>🎚️ Frame Navigation</h3>
+                <input type="range" id="frameSlider" min="0" max="119" value="0" 
+                       oninput="setFrame(this.value)">
+                <br><br>
+                <input type="number" id="frameInput" placeholder="Frame #" min="0" max="119">
+                <button onclick="goToFrame()">Go to Frame</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>⚡ Speed & Effects</h3>
+                <input type="range" id="speedSlider" min="0.1" max="4" step="0.1" value="1.5" 
+                       oninput="updateSpeed(this.value)">
+                <br><br>
+                <span id="speedValue">1.5x</span> Animation Speed
+                <br><br>
+                <button onclick="toggleAutoplay()">🔄 Auto Loop</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>📊 Quick Actions</h3>
+                <button onclick="goToSequence(0)">🔍 Scanning</button>
+                <button onclick="goToSequence(1)">🎯 Targeting</button>
+                <button onclick="goToSequence(2)">✋ Grasping</button>
+                <button onclick="goToSequence(3)">📦 Harvesting</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="currentFrame">1</div>
+                <div class="stat-label">Current Frame</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="tomatoCount">0</div>
+                <div class="stat-label">Tomatoes Harvested</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="robotPosition">1.5, 2.5</div>
+                <div class="stat-label">🤖 Robot Position</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="operationStatus">SCANNING</div>
+                <div class="stat-label">
+                    <span class="status-indicator status-scanning" id="statusIndicator"></span>
+                    Operation Status
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="cycleProgress">0%</div>
+                <div class="stat-label">Cycle Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="efficiency">98.5%</div>
+                <div class="stat-label">Harvest Efficiency</div>
+            </div>
+        </div>
+
+        <div class="viewer-container">
+            <img id="frameImage" class="frame-display" src="enhanced_tomato_harvest_frames/enhanced_harvest_000.png" 
+                 alt="Enhanced Dynamic Tomato Harvesting Robot" onerror="showError()">
+        </div>
+
+        <div class="harvesting-sequence">
+            <h3>🍅 Enhanced Dynamic Harvesting Process (40-Frame Cycles)</h3>
+            <div class="sequence-grid">
+                <div class="sequence-item" id="sequence0">
+                    <strong>🔍 Phase 1: Scanning & Approaching (Frames 0-9)</strong><br>
+                    Advanced vision system scans for ripe tomatoes. Robot navigates with dynamic movement patterns and dramatic arm positioning for optimal approach angles.
+                </div>
+                <div class="sequence-item" id="sequence1">
+                    <strong>🎯 Phase 2: Targeting & Reaching (Frames 10-19)</strong><br>
+                    Precision targeting with enhanced arm extension. Real-time trajectory planning with smooth, fluid movements and gripper preparation.
+                </div>
+                <div class="sequence-item" id="sequence2">
+                    <strong>✋ Phase 3: Grasping Process (Frames 20-29)</strong><br>
+                    Delicate gripper closure with pressure sensors. Visual feedback with LED indicators and precise tomato manipulation without damage.
+                </div>
+                <div class="sequence-item" id="sequence3">
+                    <strong>📦 Phase 4: Harvesting Complete (Frames 30-39)</strong><br>
+                    Successful tomato collection with return motion. Collection into harvest container with efficiency tracking and preparation for next target.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let totalFrames = 120;
+        let currentFrame = 0;
+        let isPlaying = false;
+        let animationInterval;
+        let defaultSpeed = 80; // milliseconds per frame
+        let autoLoop = true;
+
+        function updateDisplay() {
+            // Update frame image
+            const frameImage = document.getElementById('frameImage');
+            const frameNumber = String(currentFrame).padStart(3, '0');
+            frameImage.src = `enhanced_tomato_harvest_frames/enhanced_harvest_${frameNumber}.png`;
+            
+            // Update frame slider
+            document.getElementById('frameSlider').value = currentFrame;
+            
+            // Update stats
+            document.getElementById('currentFrame').textContent = currentFrame + 1;
+            
+            // Calculate robot position (moves through greenhouse)
+            const progress = currentFrame / totalFrames;
+            const robotX = 1.5 + progress * 4;
+            const robotY = 2.5 + 0.5 * Math.sin(currentFrame * 0.15);
+            document.getElementById('robotPosition').textContent = `${robotX.toFixed(1)}, ${robotY.toFixed(1)}`;
+            
+            // Calculate tomatoes harvested (one every 40 frames)
+            const harvestedCount = Math.floor(currentFrame / 40);
+            document.getElementById('tomatoCount').textContent = harvestedCount;
+            
+            // Update harvesting sequence status
+            const sequenceFrame = currentFrame % 40;
+            const statusIndicator = document.getElementById('statusIndicator');
+            let operation, statusClass, activeSequence;
+            
+            if (sequenceFrame < 10) {
+                operation = 'SCANNING';
+                statusClass = 'status-scanning';
+                activeSequence = 0;
+            } else if (sequenceFrame < 20) {
+                operation = 'TARGETING';
+                statusClass = 'status-targeting';
+                activeSequence = 1;
+            } else if (sequenceFrame < 30) {
+                operation = 'GRASPING';
+                statusClass = 'status-grasping';
+                activeSequence = 2;
+            } else {
+                operation = 'HARVESTING';
+                statusClass = 'status-harvesting';
+                activeSequence = 3;
+            }
+            
+            document.getElementById('operationStatus').textContent = operation;
+            statusIndicator.className = `status-indicator ${statusClass}`;
+            
+            // Update cycle progress
+            const cycleProgress = ((sequenceFrame / 40) * 100).toFixed(1);
+            document.getElementById('cycleProgress').textContent = `${cycleProgress}%`;
+            
+            // Update efficiency (dynamic calculation)
+            const efficiency = (98.5 + Math.sin(currentFrame * 0.1) * 1.5).toFixed(1);
+            document.getElementById('efficiency').textContent = `${efficiency}%`;
+            
+            // Highlight active sequence
+            for (let i = 0; i < 4; i++) {
+                const sequenceElement = document.getElementById(`sequence${i}`);
+                if (i === activeSequence) {
+                    sequenceElement.classList.add('sequence-active');
+                } else {
+                    sequenceElement.classList.remove('sequence-active');
+                }
+            }
+        }
+
+        function togglePlay() {
+            const playBtn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                clearInterval(animationInterval);
+                isPlaying = false;
+                playBtn.textContent = '▶️ Play Animation';
+            } else {
+                const speed = parseFloat(document.getElementById('speedSlider').value) || 1.5;
+                const interval = defaultSpeed / speed;
+                
+                animationInterval = setInterval(() => {
+                    currentFrame++;
+                    if (currentFrame >= totalFrames) {
+                        if (autoLoop) {
+                            currentFrame = 0;
+                        } else {
+                            clearInterval(animationInterval);
+                            isPlaying = false;
+                            playBtn.textContent = '▶️ Play Animation';
+                            return;
+                        }
+                    }
+                    updateDisplay();
+                }, interval);
+                
+                isPlaying = true;
+                playBtn.textContent = '⏸️ Pause Animation';
+            }
+        }
+
+        function resetAnimation() {
+            if (isPlaying) {
+                clearInterval(animationInterval);
+                isPlaying = false;
+                document.getElementById('playBtn').textContent = '▶️ Play Animation';
+            }
+            currentFrame = 0;
+            updateDisplay();
+        }
+
+        function nextFrame() {
+            currentFrame = (currentFrame + 1) % totalFrames;
+            updateDisplay();
+        }
+
+        function prevFrame() {
+            currentFrame = (currentFrame - 1 + totalFrames) % totalFrames;
+            updateDisplay();
+        }
+
+        function setFrame(frame) {
+            currentFrame = parseInt(frame);
+            updateDisplay();
+        }
+
+        function goToFrame() {
+            const frameInput = document.getElementById('frameInput');
+            const frame = parseInt(frameInput.value);
+            
+            if (frame >= 0 && frame < totalFrames) {
+                currentFrame = frame;
+                updateDisplay();
+                frameInput.value = '';
+            } else {
+                alert(`Please enter a frame number between 0 and ${totalFrames - 1}`);
+            }
+        }
+
+        function goToSequence(sequenceIndex) {
+            const sequenceStarts = [0, 10, 20, 30];
+            const currentCycle = Math.floor(currentFrame / 40);
+            currentFrame = currentCycle * 40 + sequenceStarts[sequenceIndex];
+            updateDisplay();
+        }
+
+        function updateSpeed(speed) {
+            document.getElementById('speedValue').textContent = `${parseFloat(speed).toFixed(1)}x`;
+            
+            if (isPlaying) {
+                clearInterval(animationInterval);
+                const interval = defaultSpeed / speed;
+                animationInterval = setInterval(() => {
+                    currentFrame++;
+                    if (currentFrame >= totalFrames) {
+                        if (autoLoop) {
+                            currentFrame = 0;
+                        } else {
+                            clearInterval(animationInterval);
+                            isPlaying = false;
+                            document.getElementById('playBtn').textContent = '▶️ Play Animation';
+                            return;
+                        }
+                    }
+                    updateDisplay();
+                }, interval);
+            }
+        }
+
+        function toggleAutoplay() {
+            autoLoop = !autoLoop;
+            const btn = event.target;
+            btn.textContent = autoLoop ? '🔄 Auto Loop' : '⏹️ Stop at End';
+        }
+
+        function showError() {
+            document.getElementById('frameImage').alt = 'Error loading frame. Please run the enhanced simulation first.';
+            document.querySelector('.viewer-container').innerHTML = `
+                <div class="loading">
+                    <h2>🍅 Enhanced Frames Loading...</h2>
+                    <p>The enhanced dynamic tomato harvesting simulation is loading.</p>
+                    <p>If frames don't appear, run: <code>python3 enhanced_dynamic_tomato_robot.py</code></p>
+                </div>
+            `;
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowLeft':
+                    prevFrame();
+                    break;
+                case 'ArrowRight':
+                    nextFrame();
+                    break;
+                case 'Home':
+                    resetAnimation();
+                    break;
+                case 'Digit1':
+                    goToSequence(0);
+                    break;
+                case 'Digit2':
+                    goToSequence(1);
+                    break;
+                case 'Digit3':
+                    goToSequence(2);
+                    break;
+                case 'Digit4':
+                    goToSequence(3);
+                    break;
+            }
+        });
+
+        // Auto-start animation on load
+        setTimeout(() => {
+            updateDisplay();
+            togglePlay();
+        }, 1000);
+    </script>
+</body>
+</html>

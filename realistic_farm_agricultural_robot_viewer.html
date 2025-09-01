@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 WORLDLIGHT AGRI CONSULT - Realistic Farm Agricultural Robot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 50%, #006400 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+            color: #90EE90;
+        }
+
+        .header p {
+            margin: 10px 0;
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            font-size: 1.1em;
+        }
+
+        button {
+            background: linear-gradient(45deg, #228B22, #32CD32);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #32CD32, #00FF00);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        input[type="range"] {
+            width: 350px;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="number"] {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            font-weight: bold;
+            width: 90px;
+            font-size: 1.1em;
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .viewer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .frame-display {
+            max-width: 95%;
+            max-height: 75vh;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transition: transform 0.4s ease;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .frame-display:hover {
+            transform: scale(1.03);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            transition: transform 0.4s ease;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .stat-value {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #90EE90;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-top: 8px;
+        }
+
+        .farm-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .farm-info h3 {
+            margin-top: 0;
+            color: #90EE90;
+            font-size: 1.5em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #32CD32;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-active {
+            background-color: #32CD32;
+        }
+
+        .status-picking {
+            background-color: #FFD700;
+        }
+
+        .status-returning {
+            background-color: #00BFFF;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.3em;
+            color: #90EE90;
+        }
+
+        .robot-specs {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            input[type="range"] {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 WORLDLIGHT AGRI CONSULT</h1>
+        <p>Realistic Farm Agricultural Robot System</p>
+        <p>🏭 Industrial-Grade 4-DOF Robotic Arm in Authentic Greenhouse Environment 🌱</p>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <button id="playBtn" onclick="togglePlay()">▶️ Play</button>
+            <button onclick="resetAnimation()">🔄 Reset</button>
+        </div>
+        
+        <div class="control-group">
+            <label for="frameSlider">Frame:</label>
+            <input type="range" id="frameSlider" min="0" max="119" value="0" oninput="seekFrame(this.value)">
+        </div>
+        
+        <div class="control-group">
+            <label for="speedInput">Speed:</label>
+            <input type="number" id="speedInput" min="0.1" max="5" step="0.1" value="1" placeholder="1.0">
+        </div>
+        
+        <div class="control-group">
+            <label for="frameInput">Go to:</label>
+            <input type="number" id="frameInput" min="0" max="119" placeholder="Frame #">
+            <button onclick="goToFrame()">Go</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="currentFrame">1</div>
+            <div class="stat-label">Current Frame</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="harvestedCount">0</div>
+            <div class="stat-label">Tomatoes Harvested</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="operationStatus">SCANNING</div>
+            <div class="stat-label">
+                <span class="status-indicator status-active" id="statusIndicator"></span>
+                Operation Status
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">AG-4000</div>
+            <div class="stat-label">Robot Model</div>
+        </div>
+    </div>
+
+    <div class="viewer-container">
+        <img id="frameImage" class="frame-display" src="realistic_farm_robot_frames/realistic_farm_frame_000.png" 
+             alt="Realistic Farm Agricultural Robot" onerror="showError()">
+    </div>
+
+    <div class="farm-info">
+        <h3>🏭 Industrial Agricultural Robot System Specifications</h3>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <strong>🤖 Robot Configuration</strong><br>
+                WORLDLIGHT-AG-4000 Series with 4-DOF articulated arm design. Industrial-grade construction with precision positioning accuracy of ±2mm for optimal fruit harvesting.
+            </div>
+            <div class="feature-item">
+                <strong>🏠 Greenhouse Environment</strong><br>
+                Controlled agricultural environment with proper growing beds, irrigation systems, support structures, and climate control for maximum crop productivity.
+            </div>
+            <div class="feature-item">
+                <strong>🍅 Tomato Recognition</strong><br>
+                Advanced computer vision system with real-time ripeness detection, 3D fruit positioning, and gentle harvesting algorithms to minimize crop damage.
+            </div>
+            <div class="feature-item">
+                <strong>⚡ Power & Control</strong><br>
+                480V industrial power supply with integrated control cabinet, status monitoring, safety systems, and remote operation capabilities.
+            </div>
+            <div class="feature-item">
+                <strong>🎯 Precision Gripper</strong><br>
+                Pneumatic end-effector with force sensors, adjustable grip pressure, and specialized tomato handling mechanisms for delicate fruit harvesting.
+            </div>
+            <div class="feature-item">
+                <strong>📊 Efficiency Metrics</strong><br>
+                Real-time performance monitoring with harvest tracking, quality assessment, productivity analytics, and operational optimization.
+            </div>
+        </div>
+        
+        <div class="robot-specs">
+            <strong>🔧 TECHNICAL SPECIFICATIONS:</strong><br>
+            • Reach: 8.2 meters maximum extension<br>
+            • Payload: 5kg continuous, 10kg peak<br>
+            • Repeatability: ±0.5mm positioning accuracy<br>
+            • Speed: 2.5 m/s maximum end-effector velocity<br>
+            • Power: 480V 3-phase, 15kW operational<br>
+            • Safety: Emergency stops, collision detection, zone monitoring<br>
+            • Environment: IP65 rated for greenhouse conditions<br>
+            • Connectivity: Ethernet, WiFi, 4G for remote monitoring
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let totalFrames = 120;
+        let isPlaying = false;
+        let animationInterval;
+        let defaultSpeed = 200; // milliseconds per frame
+
+        // Harvest schedule (frames where tomatoes are picked)
+        const harvestFrames = [];
+        for (let i = 0; i < 8; i++) {
+            harvestFrames.push(Math.floor(i * 15 + 12)); // Every 15 frames
+        }
+
+        function updateDisplay() {
+            // Update frame image
+            const frameImage = document.getElementById('frameImage');
+            const frameNumber = String(currentFrame).padStart(3, '0');
+            frameImage.src = `realistic_farm_robot_frames/realistic_farm_frame_${frameNumber}.png`;
+            
+            // Update frame slider
+            document.getElementById('frameSlider').value = currentFrame;
+            
+            // Update stats
+            document.getElementById('currentFrame').textContent = currentFrame + 1;
+            
+            // Calculate harvested tomatoes
+            const harvested = harvestFrames.filter(frame => frame <= currentFrame).length;
+            document.getElementById('harvestedCount').textContent = harvested;
+            
+            // Determine operation status
+            const frameInCycle = currentFrame % 15;
+            const statusIndicator = document.getElementById('statusIndicator');
+            let operation, statusClass;
+            
+            if (frameInCycle < 5) {
+                operation = 'APPROACHING';
+                statusClass = 'status-active';
+            } else if (frameInCycle < 10) {
+                operation = 'HARVESTING';
+                statusClass = 'status-picking';
+            } else {
+                operation = 'RETURNING';
+                statusClass = 'status-returning';
+            }
+            
+            document.getElementById('operationStatus').textContent = operation;
+            statusIndicator.className = `status-indicator ${statusClass}`;
+        }
+
+        function togglePlay() {
+            const playBtn = document.getElementById('playBtn');
+            
+            if (isPlaying) {
+                // Stop animation
+                clearInterval(animationInterval);
+                isPlaying = false;
+                playBtn.textContent = '▶️ Play';
+            } else {
+                // Start animation
+                const speed = parseFloat(document.getElementById('speedInput').value) || 1;
+                const interval = defaultSpeed / speed;
+                
+                animationInterval = setInterval(() => {
+                    currentFrame = (currentFrame + 1) % totalFrames;
+                    updateDisplay();
+                }, interval);
+                
+                isPlaying = true;
+                playBtn.textContent = '⏸️ Pause';
+            }
+        }
+
+        function resetAnimation() {
+            if (isPlaying) {
+                togglePlay();
+            }
+            currentFrame = 0;
+            updateDisplay();
+        }
+
+        function seekFrame(frame) {
+            currentFrame = parseInt(frame);
+            updateDisplay();
+        }
+
+        function goToFrame() {
+            const frameInput = document.getElementById('frameInput');
+            const frame = parseInt(frameInput.value);
+            
+            if (frame >= 0 && frame < totalFrames) {
+                currentFrame = frame;
+                updateDisplay();
+                frameInput.value = '';
+            } else {
+                alert(`Please enter a frame number between 0 and ${totalFrames - 1}`);
+            }
+        }
+
+        function showError() {
+            document.getElementById('frameImage').alt = 'Error loading frame. Please run the simulation first.';
+            document.querySelector('.viewer-container').innerHTML = `
+                <div class="loading">
+                    <h2>🚨 Realistic Farm Frames Not Found</h2>
+                    <p>Please run the realistic farm simulation first to generate the frames.</p>
+                    <p>Execute: <code>python3 realistic_farm_agricultural_robot.py</code></p>
+                </div>
+            `;
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', function(e) {
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlay();
+                    break;
+                case 'ArrowLeft':
+                    if (currentFrame > 0) {
+                        currentFrame--;
+                        updateDisplay();
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (currentFrame < totalFrames - 1) {
+                        currentFrame++;
+                        updateDisplay();
+                    }
+                    break;
+                case 'Home':
+                    resetAnimation();
+                    break;
+            }
+        });
+
+        // Speed control
+        document.getElementById('speedInput').addEventListener('change', function() {
+            if (isPlaying) {
+                togglePlay();
+                togglePlay(); // Restart with new speed
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+
+        // Add loading status
+        window.addEventListener('load', function() {
+            console.log('🤖 WORLDLIGHT AGRI CONSULT - Realistic Farm Agricultural Robot Viewer Loaded');
+            console.log('🏭 Industrial-grade agricultural automation system ready');
+        });
+    </script>
+</body>
+</html>

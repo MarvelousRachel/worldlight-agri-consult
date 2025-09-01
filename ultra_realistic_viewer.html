@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultra-Realistic Professional Drone - Worldlight Agri Consult</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+            color: #FFD700;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            margin: 15px 0;
+            color: #87CEEB;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+        
+        .improvement-banner {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .video-container {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 1400px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            color: #333;
+        }
+        
+        .main-video-display {
+            text-align: center;
+            margin: 25px 0;
+        }
+        
+        .main-video-display img {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            border-radius: 20px;
+            border: 4px solid #2a5298;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease;
+        }
+        
+        .main-video-display img:hover {
+            transform: scale(1.02);
+        }
+        
+        .controls {
+            margin: 25px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #2E8B57);
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            border-radius: 35px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+        }
+        
+        .btn-play {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            font-size: 20px;
+            padding: 22px 40px;
+        }
+        
+        .btn-stop {
+            background: linear-gradient(45deg, #E74C3C, #C0392B);
+        }
+        
+        .frame-info {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #3498DB, #2980B9);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .progress-container {
+            background: #ddd;
+            border-radius: 30px;
+            height: 25px;
+            margin: 25px 0;
+            overflow: hidden;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #2E8B57);
+            border-radius: 30px;
+            transition: width 0.5s ease;
+            width: 0%;
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.4);
+        }
+        
+        .improvements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .improvement-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: left;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .improvement-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .improvement-card h4 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #FFD700;
+        }
+        
+        .comparison-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+            color: #333;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .before-after {
+            text-align: center;
+        }
+        
+        .before-after img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            border: 3px solid #ddd;
+        }
+        
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 20px;
+        }
+        
+        .thumbnail {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+        
+        .thumbnail:hover {
+            border-color: #4CAF50;
+            transform: scale(1.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .thumbnail.active {
+            border-color: #FF6B35;
+            border-width: 4px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-item {
+            background: linear-gradient(45deg, #FF6B35, #F7931E);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .features-showcase {
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+        
+        .speed-controls {
+            margin: 25px 0;
+        }
+        
+        .speed-btn {
+            background: linear-gradient(45deg, #9B59B6, #8E44AD);
+            padding: 12px 25px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        
+        .video-info {
+            background: linear-gradient(45deg, #e8f5e8, #d4edda);
+            color: #155724;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            border-left: 6px solid #4CAF50;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚁 ULTRA-REALISTIC PROFESSIONAL DRONE 🍅</h1>
+        <div class="subtitle">Worldlight Agri Consult - Next-Generation Agricultural Technology</div>
+        <div class="subtitle">200 Ultra-High Definition Frames - Professional Quadcopter Design</div>
+    </div>
+
+    <div class="improvement-banner">
+        🎯 MAJOR IMPROVEMENTS: No More "Car-Like" Appearance! 
+        Now Features Professional Quadcopter Design with Carbon Fiber Body, 
+        Spinning Rotors, Gimbal Camera & Advanced Spray Systems!
+    </div>
+
+    <div class="video-container">
+        <h2>🎬 Ultra-Realistic Professional Drone Simulation</h2>
+        
+        <div class="video-info">
+            <h3>🚁 REVOLUTIONARY IMPROVEMENTS - Professional Quadcopter Design:</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div><strong>✅ Carbon Fiber Body:</strong> Sleek professional frame design</div>
+                <div><strong>✅ 4 Spinning Rotors:</strong> Realistic motion blur effects</div>
+                <div><strong>✅ Gimbal Camera:</strong> Professional cinematography mount</div>
+                <div><strong>✅ GPS & Navigation:</strong> Real flight system components</div>
+                <div><strong>✅ Advanced Spray Boom:</strong> 4-nozzle precision system</div>
+                <div><strong>✅ Flight Altitude:</strong> Realistic 3.5m operating height</div>
+            </div>
+        </div>
+        
+        <div class="main-video-display">
+            <img id="mainFrame" src="ultra_realistic_frames/ultra_realistic_frame_000.png" alt="Ultra-Realistic Drone Video">
+        </div>
+        
+        <div class="frame-info" id="frameInfo">
+            Frame 1 of 200 - Professional Drone Positioning
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-play" onclick="playVideo()">▶️ Play Ultra-Realistic Video</button>
+            <button class="btn btn-stop" onclick="pauseVideo()">⏸️ Pause</button>
+            <button class="btn" onclick="resetVideo()">🔄 Reset</button>
+            <button class="btn" onclick="jumpToSpraying()">💧 Jump to Spraying</button>
+        </div>
+        
+        <div class="speed-controls">
+            <span style="font-weight: bold; margin-right: 15px;">Playback Speed: </span>
+            <button class="btn speed-btn" onclick="setSpeed(0.5)">0.5x</button>
+            <button class="btn speed-btn" onclick="setSpeed(1)">1x</button>
+            <button class="btn speed-btn" onclick="setSpeed(2)">2x</button>
+            <button class="btn speed-btn" onclick="setSpeed(4)">4x</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div>📊 Ultra-HD Frames</div>
+                <div>200 @ 200 DPI</div>
+            </div>
+            <div class="stat-item">
+                <div>🎯 Farm Coverage</div>
+                <div>22m × 16m</div>
+            </div>
+            <div class="stat-item">
+                <div>🍅 Tomato Plants</div>
+                <div>140+ Individual</div>
+            </div>
+            <div class="stat-item">
+                <div>💧 Spray Nozzles</div>
+                <div>4-Point Precision</div>
+            </div>
+            <div class="stat-item">
+                <div>🚁 Flight Altitude</div>
+                <div>3.5m Professional</div>
+            </div>
+            <div class="stat-item">
+                <div>⚡ Drone Model</div>
+                <div>AgriDrone Pro X1</div>
+            </div>
+        </div>
+        
+        <h3>🎯 Ultra-Realistic Key Moments</h3>
+        <div class="thumbnail-grid">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_000.png" onclick="jumpToFrame(0)" title="Professional Takeoff">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_030.png" onclick="jumpToFrame(30)" title="Flight Positioning">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_060.png" onclick="jumpToFrame(60)" title="Active Spraying">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_090.png" onclick="jumpToFrame(90)" title="Precision Application">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_120.png" onclick="jumpToFrame(120)" title="Second Pass">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_150.png" onclick="jumpToFrame(150)" title="Final Coverage">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_180.png" onclick="jumpToFrame(180)" title="Mission Complete">
+            <img class="thumbnail" src="ultra_realistic_frames/ultra_realistic_frame_199.png" onclick="jumpToFrame(199)" title="Return to Home">
+        </div>
+        
+        <div class="features-showcase">
+            <h2>🌟 Professional Agricultural Drone Features</h2>
+            <div class="improvements-grid">
+                <div class="improvement-card">
+                    <h4>🚁 Professional Quadcopter</h4>
+                    <p><strong>No more car-like appearance!</strong> Features authentic carbon fiber body, 4 distinct arms, and professional proportions that look exactly like real agricultural drones.</p>
+                </div>
+                <div class="improvement-card">
+                    <h4>🌪️ Realistic Rotor System</h4>
+                    <p>4 individual rotors with spinning motion blur, motor housings, and two-blade propellers. Each rotor spins independently with realistic physics.</p>
+                </div>
+                <div class="improvement-card">
+                    <h4>📹 Gimbal Camera System</h4>
+                    <p>Professional 3-axis gimbal camera mount with lens detail, exactly like real agricultural drones use for field monitoring and documentation.</p>
+                </div>
+                <div class="improvement-card">
+                    <h4>🛰️ GPS & Navigation</h4>
+                    <p>Realistic GPS antenna, navigation LEDs (red rear, green front), and flight information displays showing altitude, speed, and battery status.</p>
+                </div>
+                <div class="improvement-card">
+                    <h4>💧 Advanced Spray System</h4>
+                    <p>Professional spray boom with 4 precision nozzles, realistic water droplet physics, pressure indicators, and coverage visualization.</p>
+                </div>
+                <div class="improvement-card">
+                    <h4>🌱 Enhanced Plant Detail</h4>
+                    <p>140+ individual tomato plants with compound leaves, clustered tomatoes, ripeness stages, and realistic water absorption effects.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="comparison-section">
+            <h2>📈 Technical Specifications</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #4CAF50;">
+                    <h4>Drone Specifications</h4>
+                    <p><strong>Model:</strong> AgriDrone Pro X1</p>
+                    <p><strong>Frame:</strong> Carbon Fiber</p>
+                    <p><strong>Rotors:</strong> 4x Two-Blade Propellers</p>
+                    <p><strong>Camera:</strong> 3-Axis Gimbal System</p>
+                    <p><strong>GPS:</strong> High-Precision Navigation</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #2196F3;">
+                    <h4>Spray System</h4>
+                    <p><strong>Nozzles:</strong> 4-Point Precision</p>
+                    <p><strong>Flow Rate:</strong> 1.2L/min per nozzle</p>
+                    <p><strong>Pressure:</strong> 2.5-3.5 BAR</p>
+                    <p><strong>Swath Width:</strong> 2.5 meters</p>
+                    <p><strong>Coverage:</strong> Precision Mode</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #FF9800;">
+                    <h4>Flight Performance</h4>
+                    <p><strong>Altitude:</strong> 3.5m Operational</p>
+                    <p><strong>Speed:</strong> 3.5 m/s</p>
+                    <p><strong>Pattern:</strong> Systematic Grid</p>
+                    <p><strong>Stability:</strong> GPS Hold Mode</p>
+                    <p><strong>Endurance:</strong> 25-30 minutes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFrame = 0;
+        let totalFrames = 200;
+        let isPlaying = false;
+        let playInterval = null;
+        let playSpeed = 1;
+        
+        const enhancedDescriptions = {
+            0: "Professional Takeoff - Carbon Fiber Quadcopter Initialization",
+            30: "Flight Positioning - GPS Navigation Active, 3.5m Altitude",
+            60: "Precision Spraying - 4-Nozzle System Active, Water Application",
+            90: "Advanced Coverage - Systematic Grid Pattern, Plant Monitoring",
+            120: "Second Pass Operation - Return Flight Path, Continued Spraying",
+            150: "Final Coverage - Completion Phase, Maximum Plant Coverage",
+            180: "Mission Complete - RTH Mode, Professional Landing Sequence",
+            199: "Base Return - Operation Complete, System Shutdown"
+        };
+        
+        function updateDisplay() {
+            const frameImg = document.getElementById('mainFrame');
+            const frameInfo = document.getElementById('frameInfo');
+            const progressBar = document.getElementById('progressBar');
+            
+            frameImg.src = `ultra_realistic_frames/ultra_realistic_frame_${currentFrame.toString().padStart(3, '0')}.png`;
+            
+            const description = enhancedDescriptions[currentFrame] || 
+                              `Professional Drone Operation - Frame ${currentFrame + 1}`;
+            frameInfo.textContent = `Frame ${currentFrame + 1} of ${totalFrames} - ${description}`;
+            
+            const progress = ((currentFrame + 1) / totalFrames) * 100;
+            progressBar.style.width = progress + '%';
+            
+            // Update thumbnail highlights
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+        }
+        
+        function playVideo() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            playInterval = setInterval(() => {
+                currentFrame++;
+                if (currentFrame >= totalFrames) {
+                    currentFrame = totalFrames - 1;
+                    pauseVideo();
+                    return;
+                }
+                updateDisplay();
+            }, 120 / playSpeed); // Slower for better viewing
+        }
+        
+        function pauseVideo() {
+            isPlaying = false;
+            if (playInterval) {
+                clearInterval(playInterval);
+                playInterval = null;
+            }
+        }
+        
+        function resetVideo() {
+            pauseVideo();
+            currentFrame = 0;
+            updateDisplay();
+        }
+        
+        function jumpToFrame(frame) {
+            pauseVideo();
+            currentFrame = frame;
+            updateDisplay();
+        }
+        
+        function jumpToSpraying() {
+            jumpToFrame(30); // Jump to when active spraying starts
+        }
+        
+        function setSpeed(speed) {
+            playSpeed = speed;
+            if (isPlaying) {
+                pauseVideo();
+                playVideo();
+            }
+            
+            // Update speed button styles
+            document.querySelectorAll('.speed-btn').forEach(btn => {
+                btn.style.background = 'linear-gradient(45deg, #9B59B6, #8E44AD)';
+            });
+            event.target.style.background = 'linear-gradient(45deg, #E74C3C, #C0392B)';
+        }
+        
+        // Enhanced keyboard controls
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case ' ': // Spacebar
+                    event.preventDefault();
+                    if (isPlaying) pauseVideo();
+                    else playVideo();
+                    break;
+                case 'ArrowLeft':
+                    if (currentFrame > 0) {
+                        currentFrame -= 5; // Jump 5 frames back
+                        if (currentFrame < 0) currentFrame = 0;
+                        updateDisplay();
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (currentFrame < totalFrames - 1) {
+                        currentFrame += 5; // Jump 5 frames forward
+                        if (currentFrame >= totalFrames) currentFrame = totalFrames - 1;
+                        updateDisplay();
+                    }
+                    break;
+                case 'Home':
+                    resetVideo();
+                    break;
+                case 'End':
+                    jumpToFrame(totalFrames - 1);
+                    break;
+                case 's':
+                    jumpToSpraying();
+                    break;
+            }
+        });
+        
+        // Initialize display
+        updateDisplay();
+        
+        // Auto-start preview
+        setTimeout(() => {
+            playVideo();
+        }, 2000);
+    </script>
+</body>
+</html>

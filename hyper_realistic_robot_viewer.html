@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Realistic Agricultural Robot - Advanced Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #87CEEB);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .main-viewer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(255,255,255,0.1));
+        }
+        
+        .image-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        #robotImage {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 18px;
+            transition: transform 0.3s ease;
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .control-panel {
+            width: 350px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            border-left: 2px solid rgba(255,255,255,0.2);
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .panel-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-title::before {
+            content: "🤖";
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+        
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,255,136,0.3);
+            flex: 1;
+            min-width: 80px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,255,136,0.4);
+            background: linear-gradient(45deg, #00cc6a, #009951);
+        }
+        
+        .btn:active {
+            transform: translateY(0px);
+        }
+        
+        .btn.pause {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        
+        .btn.pause:hover {
+            background: linear-gradient(45deg, #ee5a52, #dc4a3d);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        }
+        
+        .speed-control {
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,255,136,0.3);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,255,136,0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #cccccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00cc6a);
+            transition: width 0.3s ease;
+            border-radius: 5px;
+        }
+        
+        .frame-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 15px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        .robot-info {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .robot-info h3 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .robot-info p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+        
+        .keyboard-shortcuts {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.4;
+        }
+        
+        .keyboard-shortcuts strong {
+            color: #00ff88;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .control-panel {
+                width: 100%;
+                height: 40vh;
+                order: 2;
+            }
+            .main-viewer {
+                order: 1;
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-viewer">
+            <div class="frame-counter" id="frameCounter">Frame 000 / 180</div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="statusText">Hyper-Realistic Mode</span>
+            </div>
+            
+            <div class="image-container">
+                <img id="robotImage" src="" alt="Hyper-Realistic Agricultural Robot">
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="loading-spinner"></div>
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">🤖 Loading Hyper-Realistic Robot</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Initializing advanced simulation...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="control-panel">
+            <div class="robot-info">
+                <h3>🚀 Hyper-Realistic Agricultural Robot</h3>
+                <p><strong>🎯 Mission:</strong> Advanced tomato harvesting with photorealistic rendering</p>
+                <p><strong>🧠 AI System:</strong> Multi-sensor fusion with computer vision</p>
+                <p><strong>⚡ Power:</strong> Solar-powered autonomous operation</p>
+                <p><strong>🏭 Features:</strong> Precision gripper, LiDAR, 4K cameras</p>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-title">Animation Controls</div>
+                
+                <div class="control-buttons">
+                    <button class="btn" id="playBtn" onclick="playAnimation()">▶️ Play</button>
+                    <button class="btn pause" id="pauseBtn" onclick="pauseAnimation()">⏸️ Pause</button>
+                    <button class="btn" onclick="resetAnimation()">🔄 Reset</button>
+                </div>
+                
+                <div class="control-group">
+                    <label for="speedSlider">Animation Speed: <span id="speedValue">1.0x</span></label>
+                    <input type="range" id="speedSlider" class="slider" min="0.1" max="3.0" value="1.0" step="0.1">
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="control-group">
+                    <label for="frameSlider">Frame: <span id="currentFrameText">000</span></label>
+                    <input type="range" id="frameSlider" class="slider" min="0" max="179" value="0" step="1">
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-title">🌱 Farm Statistics</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="positionX">0.0</div>
+                        <div class="stat-label">Position X (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="positionY">0.0</div>
+                        <div class="stat-label">Position Y (m)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="harvestedCount">0</div>
+                        <div class="stat-label">Tomatoes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="efficiency">0%</div>
+                        <div class="stat-label">Efficiency</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-section">
+                <div class="panel-title">⌨️ Keyboard Controls</div>
+                <div class="keyboard-shortcuts">
+                    <strong>SPACE:</strong> Play/Pause<br>
+                    <strong>R:</strong> Reset<br>
+                    <strong>← →:</strong> Previous/Next Frame<br>
+                    <strong>↑ ↓:</strong> Speed Up/Down<br>
+                    <strong>F:</strong> First Frame<br>
+                    <strong>L:</strong> Last Frame<br>
+                    <strong>H:</strong> Toggle Help
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class HyperRealisticRobotViewer {
+            constructor() {
+                this.currentFrame = 0;
+                this.totalFrames = 180;
+                this.isPlaying = false;
+                this.animationSpeed = 1.0;
+                this.animationInterval = null;
+                this.baseInterval = 100; // milliseconds
+                this.framesDir = 'hyper_realistic_robot_frames';
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadFirstFrame();
+                this.checkFramesAvailability();
+            }
+            
+            initializeElements() {
+                this.image = document.getElementById('robotImage');
+                this.frameCounter = document.getElementById('frameCounter');
+                this.playBtn = document.getElementById('playBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.speedSlider = document.getElementById('speedSlider');
+                this.frameSlider = document.getElementById('frameSlider');
+                this.speedValue = document.getElementById('speedValue');
+                this.currentFrameText = document.getElementById('currentFrameText');
+                this.progressFill = document.getElementById('progressFill');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                this.statusText = document.getElementById('statusText');
+                
+                // Stats elements
+                this.positionX = document.getElementById('positionX');
+                this.positionY = document.getElementById('positionY');
+                this.harvestedCount = document.getElementById('harvestedCount');
+                this.efficiency = document.getElementById('efficiency');
+                
+                // Set frame slider max
+                this.frameSlider.max = this.totalFrames - 1;
+            }
+            
+            setupEventListeners() {
+                // Speed control
+                this.speedSlider.addEventListener('input', (e) => {
+                    this.animationSpeed = parseFloat(e.target.value);
+                    this.speedValue.textContent = this.animationSpeed.toFixed(1) + 'x';
+                    if (this.isPlaying) {
+                        this.restartAnimation();
+                    }
+                });
+                
+                // Frame control
+                this.frameSlider.addEventListener('input', (e) => {
+                    this.goToFrame(parseInt(e.target.value));
+                });
+                
+                // Keyboard controls
+                document.addEventListener('keydown', (e) => {
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.togglePlayPause();
+                            break;
+                        case 'KeyR':
+                            this.resetAnimation();
+                            break;
+                        case 'ArrowLeft':
+                            this.previousFrame();
+                            break;
+                        case 'ArrowRight':
+                            this.nextFrame();
+                            break;
+                        case 'ArrowUp':
+                            this.increaseSpeed();
+                            break;
+                        case 'ArrowDown':
+                            this.decreaseSpeed();
+                            break;
+                        case 'KeyF':
+                            this.goToFrame(0);
+                            break;
+                        case 'KeyL':
+                            this.goToFrame(this.totalFrames - 1);
+                            break;
+                    }
+                });
+                
+                // Image load event
+                this.image.addEventListener('load', () => {
+                    this.hideLoading();
+                });
+                
+                this.image.addEventListener('error', () => {
+                    this.showImageError();
+                });
+            }
+            
+            async checkFramesAvailability() {
+                try {
+                    // Check if first frame exists
+                    const response = await fetch(`${this.framesDir}/hyper_realistic_frame_000.png`);
+                    if (response.ok) {
+                        this.hideLoading();
+                        this.statusText.textContent = 'Ready for Operation';
+                        // Auto-start after 2 seconds
+                        setTimeout(() => {
+                            this.playAnimation();
+                        }, 2000);
+                    } else {
+                        this.showGeneratingMessage();
+                    }
+                } catch (error) {
+                    this.showGeneratingMessage();
+                }
+            }
+            
+            showGeneratingMessage() {
+                this.loadingOverlay.style.display = 'flex';
+                this.loadingOverlay.innerHTML = `
+                    <div class="loading-spinner"></div>
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">🎬 Generating Frames...</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Creating hyper-realistic simulation</div>
+                    <div style="font-size: 12px; opacity: 0.6; margin-top: 10px;">This may take a few minutes for ${this.totalFrames} frames</div>
+                `;
+                this.statusText.textContent = 'Generating Animation';
+                
+                // Check periodically for frames
+                this.checkInterval = setInterval(() => {
+                    this.checkFramesAvailability();
+                }, 5000);
+            }
+            
+            hideLoading() {
+                this.loadingOverlay.style.display = 'none';
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                }
+            }
+            
+            showImageError() {
+                this.loadingOverlay.style.display = 'flex';
+                this.loadingOverlay.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Frame Not Available</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Run the Python script to generate frames</div>
+                `;
+            }
+            
+            loadFirstFrame() {
+                this.goToFrame(0);
+            }
+            
+            goToFrame(frameNumber) {
+                if (frameNumber < 0) frameNumber = 0;
+                if (frameNumber >= this.totalFrames) frameNumber = this.totalFrames - 1;
+                
+                this.currentFrame = frameNumber;
+                const frameFilename = `hyper_realistic_frame_${frameNumber.toString().padStart(3, '0')}.png`;
+                const imagePath = `${this.framesDir}/${frameFilename}`;
+                
+                this.image.src = imagePath;
+                this.updateUI();
+                this.updateStats();
+            }
+            
+            updateUI() {
+                this.frameCounter.textContent = `Frame ${this.currentFrame.toString().padStart(3, '0')} / ${this.totalFrames}`;
+                this.currentFrameText.textContent = this.currentFrame.toString().padStart(3, '0');
+                this.frameSlider.value = this.currentFrame;
+                
+                const progress = (this.currentFrame / (this.totalFrames - 1)) * 100;
+                this.progressFill.style.width = progress + '%';
+            }
+            
+            updateStats() {
+                // Calculate robot position based on frame
+                const progress = this.currentFrame / this.totalFrames;
+                const farmSize = [25, 20];
+                
+                // Position calculation (matching Python simulation)
+                const posX = 2 + (farmSize[0] - 4) * progress;
+                const posY = 3 + 2 * Math.sin(progress * 4 * Math.PI);
+                
+                this.positionX.textContent = posX.toFixed(1);
+                this.positionY.textContent = posY.toFixed(1);
+                
+                // Harvested tomatoes (every 30 frames)
+                const harvested = Math.floor(this.currentFrame / 30);
+                this.harvestedCount.textContent = harvested;
+                
+                // Efficiency calculation
+                const maxPossibleHarvest = Math.floor(this.totalFrames / 30);
+                const efficiency = maxPossibleHarvest > 0 ? (harvested / maxPossibleHarvest * 100) : 0;
+                this.efficiency.textContent = Math.round(efficiency) + '%';
+            }
+            
+            playAnimation() {
+                if (this.isPlaying) return;
+                
+                this.isPlaying = true;
+                this.playBtn.style.opacity = '0.5';
+                this.pauseBtn.style.opacity = '1';
+                this.statusText.textContent = 'Active Harvesting';
+                
+                const interval = this.baseInterval / this.animationSpeed;
+                this.animationInterval = setInterval(() => {
+                    if (this.currentFrame >= this.totalFrames - 1) {
+                        this.pauseAnimation();
+                        this.statusText.textContent = 'Mission Complete';
+                        return;
+                    }
+                    this.goToFrame(this.currentFrame + 1);
+                }, interval);
+            }
+            
+            pauseAnimation() {
+                this.isPlaying = false;
+                if (this.animationInterval) {
+                    clearInterval(this.animationInterval);
+                    this.animationInterval = null;
+                }
+                this.playBtn.style.opacity = '1';
+                this.pauseBtn.style.opacity = '0.5';
+                this.statusText.textContent = 'Paused';
+            }
+            
+            togglePlayPause() {
+                if (this.isPlaying) {
+                    this.pauseAnimation();
+                } else {
+                    this.playAnimation();
+                }
+            }
+            
+            resetAnimation() {
+                this.pauseAnimation();
+                this.goToFrame(0);
+                this.statusText.textContent = 'Ready for Operation';
+            }
+            
+            restartAnimation() {
+                if (this.isPlaying) {
+                    this.pauseAnimation();
+                    this.playAnimation();
+                }
+            }
+            
+            nextFrame() {
+                this.pauseAnimation();
+                this.goToFrame(this.currentFrame + 1);
+            }
+            
+            previousFrame() {
+                this.pauseAnimation();
+                this.goToFrame(this.currentFrame - 1);
+            }
+            
+            increaseSpeed() {
+                const newSpeed = Math.min(3.0, this.animationSpeed + 0.1);
+                this.speedSlider.value = newSpeed;
+                this.animationSpeed = newSpeed;
+                this.speedValue.textContent = newSpeed.toFixed(1) + 'x';
+                if (this.isPlaying) {
+                    this.restartAnimation();
+                }
+            }
+            
+            decreaseSpeed() {
+                const newSpeed = Math.max(0.1, this.animationSpeed - 0.1);
+                this.speedSlider.value = newSpeed;
+                this.animationSpeed = newSpeed;
+                this.speedValue.textContent = newSpeed.toFixed(1) + 'x';
+                if (this.isPlaying) {
+                    this.restartAnimation();
+                }
+            }
+        }
+        
+        // Global functions for button onclick events
+        function playAnimation() {
+            viewer.playAnimation();
+        }
+        
+        function pauseAnimation() {
+            viewer.pauseAnimation();
+        }
+        
+        function resetAnimation() {
+            viewer.resetAnimation();
+        }
+        
+        // Initialize the viewer when page loads
+        let viewer;
+        document.addEventListener('DOMContentLoaded', () => {
+            viewer = new HyperRealisticRobotViewer();
+        });
+    </script>
+</body>
+</html>
